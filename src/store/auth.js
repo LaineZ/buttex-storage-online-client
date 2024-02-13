@@ -11,12 +11,15 @@ export const useAuthStore = defineStore('auth', {
     }),
     actions: {
         setInfo(info) {
-            console.log("SETTED:", info);
             this.id = info.id;
             this.name = info.name;
             this.nickname = info.nickname;
             this.access_level = info.access_level;
             this.token = localStorage.getItem("token");
         },
+
+        setNick(nick) {
+            this.nickname = nick;
+        }
     },
 });

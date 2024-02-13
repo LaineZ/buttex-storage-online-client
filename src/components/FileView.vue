@@ -4,7 +4,7 @@
           <button @click="goBack" title="Go up" :disabled="currentTraversal == 0 || loading"><i class="fa fa-arrow-up"></i></button>
           <button @click="getFiles" title="Refresh listing" :disabled="loading" :class="loading ? 'fa-spin' : ''"><i class="fa fa-refresh"></i></button>
           <button @click="view == 0 ? view = 1 : view = 0" title="Switch view"><i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i></button>
-          <user-button style="flex: 1; margin-right: 10px; text-align: right;"></user-button>
+          <user-button style="margin-left: auto; margin-right: 20px;"></user-button>
       </div>
       <div class="view">
           <LoadingOverlay :loading="loading" :dimming="true"/>
@@ -18,24 +18,14 @@
                   <i class="fa fa-folder-o fa-3x" aria-hidden="true"></i> {{ folder.name }}
               </div>
               <div class="tile" v-for="file in files.data.files" @click="openFileInfo(file.id)">
-                  <img width="41" v-if="file.type.includes('image')" :src="'https://storage.buttex.ru/permanent/' + file.id">
+                  <img width="41" v-if="file.type.includes('image') || file.type.includes('video')" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + file.id">
                   <i v-else class="fa fa-3x" :class="mapIcon(file.type)" aria-hidden="true"></i>
                   {{ file.name }}
               </div>
           </div>
       </div>
   </div>
-    <modal ref="modalAuth" :buttons="[]" :closebtn="false">
-        <div style="display: flex">
-            <div style="margin-right: 20px">
-                <i class="fa fa-tty fa-4x"></i>
-            </div>
-            <p>Logging in...</p>
-        </div>
-    </modal>
-
-
-    <modal ref="modalFileInfo" :buttons="['Save changes', 'Delete file', 'Cancel']" @response="fileEditDialogResponse">
+    <modal ref="modalFileInfo" :buttons="buttonsEdit" @response="fileEditDialogResponse">
         <file-info ref="fileInfo"></file-info>
     </modal>
     <modal ref="modalDelete" :buttons="['Yes', 'No']" @response="deleteDialogResponse"></modal>
@@ -47,8 +37,10 @@ import {RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
 import FileInfo from "./FileInfo.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
-import {EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
+import {ACCESS_LEVEL_MODERATOR, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
 import UserButton from "./UserButton.vue";
+import {useAuthStore} from "../store/auth.js";
+import {ref} from "vue";
 
 export default {
     name: "FileView",
@@ -69,6 +61,7 @@ export default {
             history: [],
             currentTraversal: 0,
             userInfo: null,
+            buttonsEdit: ['Save changes', 'Delete file', 'Cancel'],
             files: {
                 data: {
                     files: [],
@@ -79,6 +72,13 @@ export default {
     },
     async mounted() {
         await this.getFiles();
+
+        const authStore = useAuthStore();
+        const authState = ref(authStore);
+
+        if (authState.value.access_level <= ACCESS_LEVEL_MODERATOR) {
+          this.buttonsEdit = ["Cancel"];
+        }
     },
     methods: {
         mapIcon(file_name) {
@@ -141,7 +141,6 @@ export default {
         },
 
         async deleteDialogResponse(index) {
-            console.log("DELET IDX:", index);
             if (index == 0) {
                 await this.deleteFile(this.selectedFileId);
             }
@@ -162,23 +161,6 @@ export default {
             this.$refs.fileInfo.retriveFile(file_id);
           });
         },
-
-        async login() {
-            try {
-                this.$refs.modalAuth.open();
-                let response = await RequestGET("/api/users/get_token", {
-                    user_name: "max",
-                    user_password: "pizda",
-                });
-
-                localStorage.setItem("token", response.data.token);
-                localStorage.setItem("user_id", response.data.user_id);
-                this.$refs.modalAuth.close();
-            } catch (error) {
-                this.$refs.modalError.open("Unable to login:" + error.message.toString());
-                this.$refs.modalAuth.close();
-            }
-        }
     }
 }
 </script>

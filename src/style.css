@@ -35,7 +35,7 @@ li:hover {
   background-color: var(--bg2);
 }
 
-button {
+button, input[type="submit"] {
   padding: 10px;
   border: none;
   background-color: var(--bg3);
@@ -43,7 +43,7 @@ button {
   transition: background-color 0.2s;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"] {
   padding: 5px;
   width: 100%;
   border: 1px solid var(--bg2);
@@ -51,6 +51,7 @@ input[type="text"] {
   color: var(--fg);
   font-size: 1em;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 button:disabled {
@@ -68,7 +69,7 @@ button:hover {
   transition: background-color 0.2s;
 }
 
-h5, h4, h3 {
+h5, h4, h3, h2 {
   margin: 0;
   padding: 0;
 }

@@ -1,4 +1,5 @@
 import {ENDPOINT} from "./consts.js";
+import {useAuthStore} from "../store/auth.js";
 
 export async function RequestGET(path, getOptions = null) {
     let response;
@@ -27,4 +28,17 @@ export async function RequestGET(path, getOptions = null) {
     } else {
         throw new Error((await response).statusText);
     }
+}
+
+
+export async function getUserInfo() {
+    const authStore = useAuthStore();
+
+    try {
+        let response = await RequestGET("/api/users/get_profile_info", {
+            user_id: localStorage.getItem("user_id")
+        });
+
+        authStore.setInfo(response.data);
+    } catch (e) {}
 }

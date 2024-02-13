@@ -2,7 +2,7 @@
     <div class="main">
         <LoadingOverlay :loading="loading" :dimming="false"/>
         <div class="icon" v-if="!loading && info">
-            <img width="64" v-if="info.type.includes('image')" :src="'https://storage.buttex.ru/permanent/' + info.id">
+            <img width="64" v-if="info.type.includes('image') || info.type.includes('video')" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + info.id">
             <i v-else class="fa fa-4x" :class="mapIcon(info.type)" style="display: block;"></i>
             <div class="preview">
                 <h4>File</h4>
@@ -143,9 +143,17 @@ export default {
     margin-right: 20px
 }
 
+input {
+    margin-bottom: 5px;
+}
+
 table {
     text-align: left;
     border: none;
     line-height: 1.2;
+}
+
+th {
+    padding-right: 10px;
 }
 </style>
