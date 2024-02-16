@@ -2,14 +2,14 @@
     <div class="main">
         <LoadingOverlay :loading="loading" :dimming="false"/>
         <div class="icon" v-if="!loading && info">
-            <img width="64" v-if="info.type.includes('image') || info.type.includes('video')" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + info.id">
+            <img width="64" v-if="info.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + info.id">
             <i v-else class="fa fa-4x" :class="mapIcon(info.type)" style="display: block;"></i>
             <div class="preview">
                 <h4>File</h4>
             </div>
         </div>
         <div class="info" v-if="info">
-            <input type="text" v-model="info.name">
+            <input type="text" v-model="info.name" :disabled="!canEdit()">
             <table>
                 <tr>
                     <th>Uploaded by:</th>
@@ -30,7 +30,7 @@
                 </tr>
                 <tr>
                     <th>Hidden:</th>
-                    <td><input type="checkbox" v-model="info.hidden"></td>
+                    <td><input type="checkbox" v-model="info.hidden" :disabled="!canEdit()"></td>
                 </tr>
                 <tr>
                     <th>File link:</th>
@@ -52,6 +52,7 @@ import LoadingOverlay from "./LoadingOverlay.vue";
 import {ACCESS_LEVEL_MODERATOR, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
 import {useAuthStore} from "../store/auth.js";
 import {RequestGET} from "../helpers/http.js";
+import {formatBytes} from "../helpers/converterHelper.js";
 
 export default {
     name: "FileInfo",
@@ -77,12 +78,20 @@ export default {
             this.loading = false;
         },
 
+        canEdit() {
+            const authStore = useAuthStore();
+            return authStore.access_level >= ACCESS_LEVEL_MODERATOR || authStore.id == this.info.user_id;
+        },
+
+        formatBytes(bytes) {
+            return formatBytes(bytes)
+        },
+
         async saveChanges() {
             // resolve permissions
             // https://storage.buttex.ru/api/docs/methods/storage/set_file_name.html
-            const authStore = useAuthStore();
 
-            if (authStore.access_level >= ACCESS_LEVEL_MODERATOR || authStore.id == info.user_id) {
+            if (this.canEdit()) {
                 try {
                     await RequestGet("/api/storage/set_file_name", {
                         file_id: this.info.id,
@@ -91,8 +100,6 @@ export default {
                 } catch (error) {
                     this.$refs.modalError.open("Unable to save changes: " + error.error || error.toString());
                 }
-            } else {
-
             }
         },
 
@@ -105,19 +112,6 @@ export default {
                 return "fa-file-o";
             }
         },
-
-        formatBytes(bytes, decimals = 2) {
-            if (!+bytes) return '0 Bytes'
-
-            const k = 1024
-            const dm = decimals < 0 ? 0 : decimals
-            const sizes = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
-
-            const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
-        },
-
 
         fmtDate(timestamp) {
             const date = new Date(timestamp * 1000);
@@ -155,5 +149,11 @@ table {
 
 th {
     padding-right: 10px;
+}
+
+@media (max-width: 700px) {
+    .main {
+        flex-direction: column;
+    }
 }
 </style>

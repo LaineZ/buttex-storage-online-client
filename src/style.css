@@ -27,6 +27,10 @@ ul {
   margin: 0;
 }
 
+i {
+  color: var(--fg2);
+}
+
 li {
   padding: 2px;
 }

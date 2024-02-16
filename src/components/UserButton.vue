@@ -9,7 +9,7 @@
         <user-info-hover ref="userInfoHover"></user-info-hover>
         <modal ref="modalLogin" :buttons="[]">
             <div>
-            <h3>It's time to kick the ball rolling and log in</h3>
+            <h3>Login</h3>
             <form @submit.prevent="loginInto">
                 <input type="text" placeholder="Username" v-model="login" required>
                 <input type="password" placeholder="Password" v-model="password" required>
@@ -114,7 +114,7 @@ button {
 }
 
 form {
-    max-width: 30vw;
+    width: 100%;
 }
 
 input {

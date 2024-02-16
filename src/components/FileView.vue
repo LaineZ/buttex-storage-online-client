@@ -1,13 +1,26 @@
 <template>
   <div class="main">
       <div class="controls">
-          <button @click="goBack" title="Go up" :disabled="currentTraversal == 0 || loading"><i class="fa fa-arrow-up"></i></button>
-          <button @click="getFiles" title="Refresh listing" :disabled="loading" :class="loading ? 'fa-spin' : ''"><i class="fa fa-refresh"></i></button>
-          <button @click="view == 0 ? view = 1 : view = 0" title="Switch view"><i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i></button>
+          <button @click="goBack" title="Go up" :disabled="currentTraversal == 0 || loading"><i class="fa fa-arrow-left"></i></button>
+          <button @click="getFiles" title="Refresh listing" :disabled="startLoading"
+                  :class="startLoading ? 'fa-spin' : ''"><i class="fa fa-refresh"></i></button>
+          <button @click="view == 0 ? view = 1 : view = 0" title="Switch view">
+              <i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i>
+          </button>
+          <button  v-if="havePermission" title="Upload" class="upload-btn">
+              <i class="fa fa-upload"></i>
+              <input type="file" name="file" @change="fileDropButton" multiple >
+          </button>
           <user-button style="margin-left: auto; margin-right: 20px;"></user-button>
       </div>
       <div class="view">
           <LoadingOverlay :loading="loading" :dimming="true"/>
+          <p v-if="!haveFiles && !this.startLoading">
+              <img width="64" src="../assets/folder.svg">
+              <br>
+              This directory are emptier than a ghost town
+          </p>
+
           <ul v-if="view == 0">
               <li v-for="folder in files.data.directories" @click="openFolder(folder.id)"><i class="fa fa-folder-o" aria-hidden="true"></i> {{ folder.name }}</li>
               <li v-for="file in files.data.files" @click="openFileInfo(file.id)"><i class="fa" :class="mapIcon(file.type)" aria-hidden="true"></i> {{ file.name }}</li>
@@ -18,7 +31,7 @@
                   <i class="fa fa-folder-o fa-3x" aria-hidden="true"></i> {{ folder.name }}
               </div>
               <div class="tile" v-for="file in files.data.files" @click="openFileInfo(file.id)">
-                  <img width="41" v-if="file.type.includes('image') || file.type.includes('video')" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + file.id">
+                  <img width="41" v-if="file.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + file.id">
                   <i v-else class="fa fa-3x" :class="mapIcon(file.type)" aria-hidden="true"></i>
                   {{ file.name }}
               </div>
@@ -30,6 +43,8 @@
     </modal>
     <modal ref="modalDelete" :buttons="['Yes', 'No']" @response="deleteDialogResponse"></modal>
     <modal ref="modalError"></modal>
+    <file-drop v-if="havePermission" @dropFile="fileDrop"></file-drop>
+    <upload-bin v-if="havePermission" ref="uploadBin" @upload="getFiles" :directory-id="currentTraversal"></upload-bin>
 </template>
 
 <script>
@@ -37,14 +52,18 @@ import {RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
 import FileInfo from "./FileInfo.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
-import {ACCESS_LEVEL_MODERATOR, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
+import {ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
 import UserButton from "./UserButton.vue";
 import {useAuthStore} from "../store/auth.js";
 import {ref} from "vue";
+import FileDrop from "./FileDrop.vue";
+import UploadBin from "./UploadBin.vue";
 
 export default {
     name: "FileView",
     components: {
+        UploadBin,
+        FileDrop,
         UserButton,
         LoadingOverlay,
         FileInfo,
@@ -55,6 +74,7 @@ export default {
             username: '',
             password: '',
             loading: false,
+            startLoading: false,
             view: 1,
             scale: '1x',
             selectedFileId: 0,
@@ -69,6 +89,16 @@ export default {
                 }
             },
         };
+    },
+    computed: {
+        haveFiles() {
+            return this.files &&
+                (this.files.data.directories.length > 0 ||this.files.data.files.length > 0);
+        },
+        havePermission() {
+            const authStore = useAuthStore();
+            return authStore.access_level >= ACCESS_LEVEL_USER;
+        }
     },
     async mounted() {
         await this.getFiles();
@@ -91,9 +121,10 @@ export default {
             }
         },
         async getFiles() {
+            this.startLoading = true;
             try {
                 let loadingTimeout = setTimeout(() => {
-                    this.loading = true;
+                this.loading = true;
                 }, 200);
                 let request = {};
 
@@ -108,6 +139,7 @@ export default {
                 this.$refs.modalError.open("Unable to get file list:" + error.error.toString() || error.message.toString());
             }
             this.loading = false;
+            this.startLoading = false;
         },
         async openFolder(directory_id) {
             if (this.currentTraversal !== directory_id) {
@@ -154,13 +186,22 @@ export default {
         },
 
         openFileInfo(file_id) {
-          console.log(file_id);
           this.selectedFileId = file_id;
           this.$refs.modalFileInfo.open();
           this.$nextTick(() => {
             this.$refs.fileInfo.retriveFile(file_id);
           });
         },
+
+        fileDrop(formData) {
+            console.log(formData);
+            this.$refs.uploadBin.pushFiles(formData, true);
+        },
+
+        fileDropButton(event) {
+            const files = event.target.files;
+            this.$refs.uploadBin.pushFiles(files);
+        }
     }
 }
 </script>
@@ -180,6 +221,9 @@ export default {
         background-color: var(--bg2);
         display: flex;
         place-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 2;
     }
 
     .controls button {
@@ -212,5 +256,24 @@ export default {
 
     .tile i, .tile img {
         margin-right: 10px;
+    }
+
+    .upload-btn {
+        width: 32px;
+        height: 36px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .upload-btn input {
+        position: absolute;
+        left: 0;
+        opacity: 0;
+    }
+
+    p {
+        padding-top: 20%;
+        text-align: center;
+        color: var(--fg3);
     }
 </style>
