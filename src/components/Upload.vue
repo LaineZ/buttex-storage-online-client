@@ -2,11 +2,11 @@
     <div class="upload">
         <div style="display: flex">
             <div>
-                <i class="fa fa-file"></i> {{ name }}
+                <i class="fa fa-file"></i> {{ getFileName }}
             </div>
             <div style="margin-left: auto; text-align: right;">
+                <a v-if="!file.finish && file.error" class="error"><i class="fa fa-times error"></i> Upload error</a>
                 <button class="cancel" @click="this.$emit('delete')"><i class="fa fa-times-rectangle"></i></button>
-                <i class="fa fa-times" v-if="error"> Upload error</i>
             </div>
         </div>
         <div>
@@ -23,40 +23,27 @@ import {formatBytes} from "../helpers/converterHelper.js";
 export default {
     name: 'upload',
     props: {
-        name: {
-            type: String,
+        file: {
+            type: Object,
         },
-        progress: {
-            type: Number,
-            default: 0,
-        },
-        total: {
-            type: Number,
-            default: 0,
-        },
-        error: {
-            type: Boolean,
-            default: false,
-        }
     },
     emits: ["delete"],
     computed: {
         getPercantage() {
-            return Math.floor(this.progress / this.total * 100) || 0;
+            return Math.floor(this.file.progress / this.file.total * 100) || 0;
         },
 
-
         getFormattedBytesProgress() {
-            return formatBytes(this.progress)
+            return formatBytes(this.file.progress)
         },
 
         getFormattedBytesTotal() {
-            return formatBytes(this.total)
+            return formatBytes(this.file.total)
         },
 
-        getFormattedSpeed() {
-            return formatBytes(this.speed)
-        }
+        getFileName() {
+            return this.file.formData.get('file').name
+        },
     }
 
 }
@@ -79,6 +66,7 @@ export default {
     position: absolute;
     background-color: var(--fg3);
     height: 16px;
+    transition: width 0.2s;
 }
 
 .cancel {
@@ -89,6 +77,11 @@ export default {
     margin: 4px 4px 4px auto;
     color: var(--fg);
     background-color: transparent;
+}
+
+.error {
+    color: #d38585;
+    margin-right: 10px;
 }
 
 .cancel:hover {

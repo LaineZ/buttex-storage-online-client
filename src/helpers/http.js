@@ -1,4 +1,4 @@
-import {ENDPOINT} from "./consts.js";
+import {ACCESS_LEVEL_MODERATOR, ENDPOINT} from "./consts.js";
 import {useAuthStore} from "../store/auth.js";
 
 export async function RequestGET(path, getOptions = null) {
@@ -30,7 +30,6 @@ export async function RequestGET(path, getOptions = null) {
     }
 }
 
-
 export async function getUserInfo() {
     const authStore = useAuthStore();
 
@@ -41,4 +40,12 @@ export async function getUserInfo() {
 
         authStore.setInfo(response.data);
     } catch (e) {}
+}
+
+export function canEdit(ownerId) {
+    // resolve permissions
+    // https://storage.buttex.ru/api/docs/methods/storage/set_file_name.html
+
+    const authStore = useAuthStore();
+    return authStore.access_level >= ACCESS_LEVEL_MODERATOR || authStore.id == ownerId;
 }

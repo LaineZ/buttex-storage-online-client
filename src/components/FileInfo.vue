@@ -50,9 +50,9 @@
 import Modal from "./Modal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
 import {ACCESS_LEVEL_MODERATOR, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
-import {useAuthStore} from "../store/auth.js";
 import {RequestGET} from "../helpers/http.js";
 import {formatBytes} from "../helpers/converterHelper.js";
+import { canEdit } from "../helpers/http.js";
 
 export default {
     name: "FileInfo",
@@ -79,8 +79,7 @@ export default {
         },
 
         canEdit() {
-            const authStore = useAuthStore();
-            return authStore.access_level >= ACCESS_LEVEL_MODERATOR || authStore.id == this.info.user_id;
+            canEdit(this.info.user_id)
         },
 
         formatBytes(bytes) {
@@ -88,12 +87,9 @@ export default {
         },
 
         async saveChanges() {
-            // resolve permissions
-            // https://storage.buttex.ru/api/docs/methods/storage/set_file_name.html
-
-            if (this.canEdit()) {
+            if (canEdit(this.info.user_id)) {
                 try {
-                    await RequestGet("/api/storage/set_file_name", {
+                    await RequestGET("/api/storage/set_file_name", {
                         file_id: this.info.id,
                         new_file_name: this.info.name,
                     });
@@ -139,16 +135,6 @@ export default {
 
 input {
     margin-bottom: 5px;
-}
-
-table {
-    text-align: left;
-    border: none;
-    line-height: 1.2;
-}
-
-th {
-    padding-right: 10px;
 }
 
 @media (max-width: 700px) {

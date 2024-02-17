@@ -52,7 +52,6 @@ export default {
             this.icon = icon;
             this.show = true;
             this.$emit("open");
-            console.log(this.show);
         },
         close() {
             this.show = false;

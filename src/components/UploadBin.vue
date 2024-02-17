@@ -4,8 +4,7 @@
       <i class="fa fa-upload"></i> Uploads in progress
     </div>
     <div class="content" v-show="!collapsed">
-        <upload v-for="(file, index) in files" :name="file.formData.get('file').name" :error="file.formData.error"
-                :progress="file.progress" :total="file.total" @delete="deleteFile(index)" ></upload>
+        <upload v-for="(file, index) in files" :file="file" @delete="deleteFile(index)" ></upload>
     </div>
     <modal ref="fileExistModal" :buttons="['Yes', 'Yes to all', 'No']">
         <file-info>
@@ -31,6 +30,7 @@ export default {
         return {
             collapsed: false,
             files: [],
+            promises: [],
         }
     },
     props: {
@@ -79,13 +79,18 @@ export default {
         },
 
         deleteFile(index) {
-            this.files[index].xhr.abort();
-            this.files[index].finish = true;
+            if (this.files[index].xhr) {
+                this.files[index].xhr.abort();
+            }
+            return new Promise((resolve) => {
+                this.$nextTick(() => {
+                    this.files.splice(index, 1);
+                    resolve();
+                });
+            });
         },
 
         async uploadFiles() {
-            const promises = [];
-
             for (let index = 0; index < this.files.length; index++){
                 const file = this.files[index];
                 try {
@@ -122,13 +127,13 @@ export default {
                             }
                         };
 
-                        file.xhr.abort = () => {
+                        file.xhr.onabort = () => {
                             file.finish = true;
                             resolve(index);
                         }
                     });
 
-                    promises.push(promise);
+                    this.promises.push(promise);
 
                     file.xhr.open("POST", ENDPOINT +
                         "/api/storage/create_file?parent_directory_id=" + this.directoryId);
@@ -136,8 +141,11 @@ export default {
                     file.xhr.send(file.formData);
                 }
             }
+            this.resolvePromises();
+        },
 
-            Promise.allSettled(promises).then((results) => {
+        resolvePromises() {
+            Promise.allSettled(this.promises).then((results) => {
                 const filesToRemove = results
                     .filter(result => result.status === 'fulfilled')
                     .map(result => result.value);
@@ -145,11 +153,10 @@ export default {
                 filesToRemove.reverse().forEach((index) => {
                     this.files.splice(index, 1);
                 });
-
-                console.log(this.files);
+                this.promises = [];
             });
         }
-    },
+    }
 }
 </script>
 

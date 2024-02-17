@@ -93,3 +93,13 @@ iframe {
 p {
   margin: 0;
 }
+
+table {
+  text-align: left;
+  border: none;
+  line-height: 1.2;
+}
+
+th {
+  padding-right: 10px;
+}

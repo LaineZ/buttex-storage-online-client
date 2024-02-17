@@ -11,12 +11,20 @@
               <i class="fa fa-upload"></i>
               <input type="file" name="file" @change="fileDropButton" multiple >
           </button>
+          <button  v-if="havePermissionCreateDirectory" title="Create directory">
+              <i class="fa fa-folder"></i>
+          </button>
+          <div class="path">
+              <div v-for="(directory, index) in directories" class="directory-traversal">
+                <p @click="goToDirectory(index)">{{ directory }}<i v-if="directories.length > 1 && index != directories.length - 1" class="fa fa-caret-right"></i></p>
+              </div>
+          </div>
           <user-button style="margin-left: auto; margin-right: 20px;"></user-button>
       </div>
       <div class="view">
           <LoadingOverlay :loading="loading" :dimming="true"/>
           <p v-if="!haveFiles && !this.startLoading">
-              <img width="64" src="../assets/folder.svg">
+              <img alt="empty folder" width="64" src="../assets/folder.svg">
               <br>
               This directory are emptier than a ghost town
           </p>
@@ -31,7 +39,7 @@
                   <i class="fa fa-folder-o fa-3x" aria-hidden="true"></i> {{ folder.name }}
               </div>
               <div class="tile" v-for="file in files.data.files" @click="openFileInfo(file.id)">
-                  <img width="41" v-if="file.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + file.id">
+                  <img alt="file" width="41" v-if="file.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + file.id">
                   <i v-else class="fa fa-3x" :class="mapIcon(file.type)" aria-hidden="true"></i>
                   {{ file.name }}
               </div>
@@ -45,10 +53,11 @@
     <modal ref="modalError"></modal>
     <file-drop v-if="havePermission" @dropFile="fileDrop"></file-drop>
     <upload-bin v-if="havePermission" ref="uploadBin" @upload="getFiles" :directory-id="currentTraversal"></upload-bin>
+    <create-directory-modal :parent-directory-id="currentTraversal"></create-directory-modal>
 </template>
 
 <script>
-import {RequestGET} from "../helpers/http.js";
+import {canEdit, RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
 import FileInfo from "./FileInfo.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
@@ -58,10 +67,12 @@ import {useAuthStore} from "../store/auth.js";
 import {ref} from "vue";
 import FileDrop from "./FileDrop.vue";
 import UploadBin from "./UploadBin.vue";
+import CreateDirectoryModal from "./CreateDirectoryModal.vue";
 
 export default {
     name: "FileView",
     components: {
+        CreateDirectoryModal,
         UploadBin,
         FileDrop,
         UserButton,
@@ -82,6 +93,8 @@ export default {
             currentTraversal: 0,
             userInfo: null,
             buttonsEdit: ['Save changes', 'Delete file', 'Cancel'],
+            directories: [],
+            currentDirectoryOwnerId: 0,
             files: {
                 data: {
                     files: [],
@@ -89,6 +102,11 @@ export default {
                 }
             },
         };
+    },
+    watch: {
+        currentTraversal: function(newValue, _) {
+            window.location.hash = newValue;
+        }
     },
     computed: {
         haveFiles() {
@@ -98,19 +116,30 @@ export default {
         havePermission() {
             const authStore = useAuthStore();
             return authStore.access_level >= ACCESS_LEVEL_USER;
+        },
+        havePermissionCreateDirectory() {
+            return canEdit(this.currentDirectoryOwnerId);
         }
     },
     async mounted() {
-        await this.getFiles();
+        const file = window.location.hash.substring(1);
 
+        if (file) {
+            this.currentTraversal = Number(file);
+        }
+
+        console.log(file);
+
+        await this.getFiles();
         const authStore = useAuthStore();
         const authState = ref(authStore);
 
-        if (authState.value.access_level <= ACCESS_LEVEL_MODERATOR) {
-          this.buttonsEdit = ["Cancel"];
+        if (authState.value.access_level < ACCESS_LEVEL_MODERATOR) {
+            this.buttonsEdit = ["Cancel"];
         }
     },
     methods: {
+        canEdit,
         mapIcon(file_name) {
             const ext = file_name.split('.').pop()
 
@@ -120,6 +149,18 @@ export default {
                 return "fa-file-o";
             }
         },
+
+        async goToDirectory(desiredIndex) {
+            this.loading = true;
+            const path = this.directories.slice(1, desiredIndex + 1);
+            const request = await RequestGET("/api/storage/get_directory_id", {
+                path: "/" + path.join("/")
+            });
+
+            await this.openFolder(request.data.directory_id || 0);
+            this.loading = false;
+        },
+
         async getFiles() {
             this.startLoading = true;
             try {
@@ -130,18 +171,34 @@ export default {
 
                 if (this.currentTraversal > 0) {
                     request = {
-                        parent_directory_id: this.currentTraversal
+                        parent_directory_id: this.currentTraversal,
+                        directory_id: this.currentTraversal,
                     }
                 }
+
                 this.files = await RequestGET("/api/storage/get_files_list", request);
+                const directoryPath = await RequestGET('/api/storage/get_directory_path', request);
+                const split = directoryPath.data.path.split("/");
+
+                split[0] = "root";
+
+                this.directories = split;
                 clearTimeout(loadingTimeout);
             } catch (error) {
-                this.$refs.modalError.open("Unable to get file list:" + error.error.toString() || error.message.toString());
+                this.$refs.modalError.open("Unable to get file list: " + error);
             }
             this.loading = false;
             this.startLoading = false;
         },
+
         async openFolder(directory_id) {
+            for (const directory of this.files.data.directories) {
+                if (directory.id == directory_id) {
+                    this.currentDirectoryOwnerId = directory.user_id;
+                    break;
+                }
+            }
+
             if (this.currentTraversal !== directory_id) {
                 this.history.push(this.currentTraversal);
                 this.currentTraversal = directory_id;
@@ -211,7 +268,7 @@ export default {
         position: relative;
         min-height: calc(100vh - 40px);
     }
-    
+
     .view ul {
         cursor: pointer;
     }
@@ -271,9 +328,51 @@ export default {
         opacity: 0;
     }
 
+    .directory-traversal {
+        color: var(--fg);
+        height: 36px;
+        place-items: center;
+        display: flex;
+    }
+
+    .directory-traversal p {
+        color: var(--fg);
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .directory-traversal p:hover {
+        color: var(--fg2);
+    }
+
+    .directory-traversal i {
+        color: var(--fg3);
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .path {
+        background-color: var(--bg3);
+        flex: 1;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+        height: 32px;
+        display: flex;
+        place-items: center;
+    }
+
     p {
         padding-top: 20%;
         text-align: center;
         color: var(--fg3);
+    }
+    
+    @media (max-width: 600px) {
+        .path {
+            display: none;
+        }
     }
 </style>
