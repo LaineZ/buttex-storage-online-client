@@ -11,7 +11,7 @@
               <i class="fa fa-upload"></i>
               <input type="file" name="file" @change="fileDropButton" multiple >
           </button>
-          <button  v-if="havePermissionCreateDirectory" title="Create directory">
+          <button  v-if="havePermissionCreateDirectory" @click="$refs.createDirModal.open(currentTraversal)" title="Create directory">
               <i class="fa fa-folder"></i>
           </button>
           <div class="path">
@@ -35,10 +35,11 @@
           </ul>
 
           <div v-if="view == 1" class="tiles">
-              <div class="tile" v-for="folder in files.data.directories" @click="openFolder(folder.id)">
+              <div class="tile" v-for="folder in files.data.directories" @click="openFolder(folder.id)"
+                   @contextmenu.prevent="openDirectoryContextMenu($event, folder.id)">
                   <i class="fa fa-folder-o fa-3x" aria-hidden="true"></i> {{ folder.name }}
               </div>
-              <div class="tile" v-for="file in files.data.files" @click="openFileInfo(file.id)">
+              <div class="tile" v-for="file in files.data.files" @click="openFileInfo(file.id)" @contextmenu.prevent="openFileContextMenu($event, file.id)">
                   <img alt="file" width="41" v-if="file.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + file.id">
                   <i v-else class="fa fa-3x" :class="mapIcon(file.type)" aria-hidden="true"></i>
                   {{ file.name }}
@@ -49,219 +50,43 @@
     <modal ref="modalFileInfo" :buttons="buttonsEdit" @response="fileEditDialogResponse">
         <file-info ref="fileInfo"></file-info>
     </modal>
-    <modal ref="modalDelete" :buttons="['Yes', 'No']" @response="deleteDialogResponse"></modal>
+    <modal ref="modalFileDelete" :buttons="['Yes', 'No']" @response="deleteFileDialogResponse"></modal>
+    <modal ref="modalDirectoryDelete" :buttons="['Yes', 'No']" @response="deleteDirectoryDialogResponse"></modal>
     <modal ref="modalError"></modal>
     <file-drop v-if="havePermission" @dropFile="fileDrop"></file-drop>
     <upload-bin v-if="havePermission" ref="uploadBin" @upload="getFiles" :directory-id="currentTraversal"></upload-bin>
-    <create-directory-modal :parent-directory-id="currentTraversal"></create-directory-modal>
+    <create-directory-modal ref="createDirModal" :directories="files.data.directories"  @created="getFiles"></create-directory-modal>
+    <rename-modal ref="renameModal" @updated="getFiles" :entity-id="this.selectedFileId" :is-directory="false"></rename-modal>
+    <context-menu ref="contextMenuFile" @itemClick="handleFileContextMenuItemClick" :items="[
+        {
+            name: 'Open file',
+            icon: 'fa-file'
+        },
+        {
+            name: 'Delete',
+            icon: 'fa-trash'
+        },
+        {
+            name: 'Rename',
+            icon: 'fa-i-cursor'
+        },
+        {
+            name: 'Properties',
+            icon: 'fa-cogs'
+        },
+    ]"></context-menu>
+    <context-menu ref="contextMenuDirectory" @itemClick="handleDirectoryContextMenuItemClick" :items="[
+        {
+            name: 'Open',
+            icon: 'fa-angle-right'
+        },
+        {
+            name: 'Delete',
+            icon: 'fa-trash'
+        }
+    ]"></context-menu>
 </template>
-
-<script>
-import {canEdit, RequestGET} from "../helpers/http.js";
-import Modal from "./Modal.vue";
-import FileInfo from "./FileInfo.vue";
-import LoadingOverlay from "./LoadingOverlay.vue";
-import {ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
-import UserButton from "./UserButton.vue";
-import {useAuthStore} from "../store/auth.js";
-import {ref} from "vue";
-import FileDrop from "./FileDrop.vue";
-import UploadBin from "./UploadBin.vue";
-import CreateDirectoryModal from "./CreateDirectoryModal.vue";
-
-export default {
-    name: "FileView",
-    components: {
-        CreateDirectoryModal,
-        UploadBin,
-        FileDrop,
-        UserButton,
-        LoadingOverlay,
-        FileInfo,
-        Modal,
-    },
-    data() {
-        return {
-            username: '',
-            password: '',
-            loading: false,
-            startLoading: false,
-            view: 1,
-            scale: '1x',
-            selectedFileId: 0,
-            history: [],
-            currentTraversal: 0,
-            userInfo: null,
-            buttonsEdit: ['Save changes', 'Delete file', 'Cancel'],
-            directories: [],
-            currentDirectoryOwnerId: 0,
-            files: {
-                data: {
-                    files: [],
-                    directories: [],
-                }
-            },
-        };
-    },
-    watch: {
-        currentTraversal: function(newValue, _) {
-            window.location.hash = newValue;
-        }
-    },
-    computed: {
-        haveFiles() {
-            return this.files &&
-                (this.files.data.directories.length > 0 ||this.files.data.files.length > 0);
-        },
-        havePermission() {
-            const authStore = useAuthStore();
-            return authStore.access_level >= ACCESS_LEVEL_USER;
-        },
-        havePermissionCreateDirectory() {
-            return canEdit(this.currentDirectoryOwnerId);
-        }
-    },
-    async mounted() {
-        const file = window.location.hash.substring(1);
-
-        if (file) {
-            this.currentTraversal = Number(file);
-        }
-
-        console.log(file);
-
-        await this.getFiles();
-        const authStore = useAuthStore();
-        const authState = ref(authStore);
-
-        if (authState.value.access_level < ACCESS_LEVEL_MODERATOR) {
-            this.buttonsEdit = ["Cancel"];
-        }
-    },
-    methods: {
-        canEdit,
-        mapIcon(file_name) {
-            const ext = file_name.split('.').pop()
-
-            if (EXTENSION_MAPPING_ICONS[ext] !== undefined) {
-                return EXTENSION_MAPPING_ICONS[ext]
-            } else {
-                return "fa-file-o";
-            }
-        },
-
-        async goToDirectory(desiredIndex) {
-            this.loading = true;
-            const path = this.directories.slice(1, desiredIndex + 1);
-            const request = await RequestGET("/api/storage/get_directory_id", {
-                path: "/" + path.join("/")
-            });
-
-            await this.openFolder(request.data.directory_id || 0);
-            this.loading = false;
-        },
-
-        async getFiles() {
-            this.startLoading = true;
-            try {
-                let loadingTimeout = setTimeout(() => {
-                this.loading = true;
-                }, 200);
-                let request = {};
-
-                if (this.currentTraversal > 0) {
-                    request = {
-                        parent_directory_id: this.currentTraversal,
-                        directory_id: this.currentTraversal,
-                    }
-                }
-
-                this.files = await RequestGET("/api/storage/get_files_list", request);
-                const directoryPath = await RequestGET('/api/storage/get_directory_path', request);
-                const split = directoryPath.data.path.split("/");
-
-                split[0] = "root";
-
-                this.directories = split;
-                clearTimeout(loadingTimeout);
-            } catch (error) {
-                this.$refs.modalError.open("Unable to get file list: " + error);
-            }
-            this.loading = false;
-            this.startLoading = false;
-        },
-
-        async openFolder(directory_id) {
-            for (const directory of this.files.data.directories) {
-                if (directory.id == directory_id) {
-                    this.currentDirectoryOwnerId = directory.user_id;
-                    break;
-                }
-            }
-
-            if (this.currentTraversal !== directory_id) {
-                this.history.push(this.currentTraversal);
-                this.currentTraversal = directory_id;
-                await this.getFiles();
-            }
-        },
-
-        async deleteFile(file_id) {
-          try {
-              await RequestGET("/api/storage/delete_file", {
-                  file_id: file_id
-              });
-          } catch (error) {
-              this.$refs.modalError.open("Unable to delete file:" + error.message.toString() + "\nEnsure your permissions are correct");
-          }
-          await this.getFiles();
-        },
-
-        async fileEditDialogResponse(index) {
-            switch (index) {
-                case 0:
-                    await this.$refs.fileInfo.saveChanges();
-                    await this.getFiles();
-                    break;
-                case 1:
-                    this.$refs.modalDelete.open("Proceed with file deletion? Once done, it's like closing Pandora's box – no turning back.");
-                    break;
-            }
-        },
-
-        async deleteDialogResponse(index) {
-            if (index == 0) {
-                await this.deleteFile(this.selectedFileId);
-            }
-        },
-
-        async goBack() {
-            if (this.currentTraversal > 0) {
-                this.currentTraversal = this.history.pop();
-                await this.getFiles();
-            }
-        },
-
-        openFileInfo(file_id) {
-          this.selectedFileId = file_id;
-          this.$refs.modalFileInfo.open();
-          this.$nextTick(() => {
-            this.$refs.fileInfo.retriveFile(file_id);
-          });
-        },
-
-        fileDrop(formData) {
-            console.log(formData);
-            this.$refs.uploadBin.pushFiles(formData, true);
-        },
-
-        fileDropButton(event) {
-            const files = event.target.files;
-            this.$refs.uploadBin.pushFiles(files);
-        }
-    }
-}
-</script>
+<script src="./FileView.js"></script>
 
 <style scoped>
     .view {

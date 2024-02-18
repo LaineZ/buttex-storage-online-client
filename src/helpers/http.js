@@ -26,7 +26,12 @@ export async function RequestGET(path, getOptions = null) {
     if (response.ok) {
         return await response.json();
     } else {
-        throw new Error((await response).statusText);
+        let json = await response.json();
+        let text = (await response).statusText;
+        if (json.error) {
+            throw new Error(json.error);
+        }
+        throw new Error(text);
     }
 }
 
