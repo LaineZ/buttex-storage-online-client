@@ -1,17 +1,14 @@
 <template>
-<div class="main" v-if="files.length > 0">
-    <div class="header" @click="collapsed = !collapsed" :style="{ opacity: collapsed ? 0.5 : 1 }">
-      <i class="fa fa-upload"></i> Uploads in progress
+    <div class="main" v-if="files.length > 0">
+        <div class="header" @click="collapsed = !collapsed" :style="{ opacity: collapsed ? 0.5 : 1 }">
+            <i class="fa fa-upload"></i> Uploads in progress
+        </div>
+        <div class="content" v-show="!collapsed">
+            <upload v-for="(file, index) in files" :file="file" @delete="deleteFile(index)"></upload>
+        </div>
+        <modal ref="fileExistModal" :buttons="['Overwrite content', 'Overwrite content for all', 'Skip', 'Skip all']">
+        </modal>
     </div>
-    <div class="content" v-show="!collapsed">
-        <upload v-for="(file, index) in files" :file="file" @delete="deleteFile(index)" ></upload>
-    </div>
-    <modal ref="fileExistModal" :buttons="['Yes', 'Yes to all', 'No']">
-        <file-info>
-
-        </file-info>
-    </modal>
-</div>
 </template>
 
 <script>
@@ -29,6 +26,7 @@ export default {
     data() {
         return {
             collapsed: false,
+            confirmForAll: false,
             files: [],
             promises: [],
         }
@@ -70,6 +68,7 @@ export default {
                         total: file[1].size,
                         error: false,
                         finish: false,
+                        id: 0,
                         xhr: null
                     });
                 }
@@ -89,22 +88,59 @@ export default {
                 });
             });
         },
-
         async uploadFiles() {
+            let confirmForAll = false;
+            let skipAll = false;
 
-            for (let index = 0; index < this.files.length; index++){
+            for (let index = 0; index < this.files.length; index++) {
                 const file = this.files[index];
                 try {
-                    await RequestGET("/api/storage/get_file_id", {
+                    let response = await RequestGET("/api/storage/get_file_id", {
                         path: file.formData.get("file").name,
                         parent_directory_id: this.directoryId
                     });
-                    this.files.splice(index,1);
-                    continue;
+
+                    let info = await RequestGET("/api/storage/get_file_info", {
+                        file_id: response.data.file_id
+                    });
+
+                    if (skipAll) {
+                        file.finish = true;
+                        continue;
+                    }
+
+                    if (confirmForAll) {
+                        file.id = response.data.file_id;
+                        continue;
+                    }
+
+                    let choice = await this.$refs.fileExistModal.openAsync(`File '${info.data.name}' already exists. What you want to do?`);
+
+                    switch (choice) {
+                        case 0:
+                            file.id = response.data.file_id;
+                            break;
+                        case 1:
+                            file.id = response.data.file_id;
+                            confirmForAll = true;
+                            break;
+                        case 2:
+                            file.finish = true;
+                            break;
+                        case 3:
+                            file.finish = true;
+                            skipAll = true;
+                            break;
+                    }
                 } catch (e) {
                     console.log(e);
                 }
+            }
 
+            this.files = this.files.filter(x => !x.finish);
+
+            for (let index = 0; index < this.files.length; index++) {
+                const file = this.files[index];
                 if (!file.xhr) {
                     file.xhr = new XMLHttpRequest();
 
@@ -135,8 +171,14 @@ export default {
 
                     this.promises.push(promise);
 
-                    file.xhr.open("POST", ENDPOINT +
-                        "/api/storage/create_file?parent_directory_id=" + this.directoryId);
+                    if (file.id) {
+                        file.xhr.open("POST", ENDPOINT +
+                            "/api/storage/set_file_content?file_id=" + file.id);
+                    } else {
+                        file.xhr.open("POST", ENDPOINT +
+                            "/api/storage/create_file?parent_directory_id=" + this.directoryId);
+                    }
+
                     file.xhr.setRequestHeader("Authorization", localStorage.getItem('token'));
                     file.xhr.send(file.formData);
                 }
