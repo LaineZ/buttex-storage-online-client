@@ -32,7 +32,8 @@ export default {
         return {
             show: false,
             text: "",
-            icon: "fa-exclamation-triangle"
+            icon: "fa-exclamation-triangle",
+            resolvePromise: null,
         };
     },
     props: {
@@ -53,6 +54,17 @@ export default {
             this.show = true;
             this.$emit("open");
         },
+
+        openAsync(text = "", icon = "fa-exclamation-triangle") {
+            this.text = text;
+            this.icon = icon;
+            this.show = true;
+            this.$emit("open");
+
+            return new Promise((resolve) => {
+                this.resolvePromise = resolve;
+            });
+        },
         close() {
             this.show = false;
             this.$emit("close");
@@ -60,15 +72,15 @@ export default {
         response(index) {
             this.$emit("response", index);
             this.close();
+            if (this.resolvePromise) {
+                this.resolvePromise(index);
+            }
         }
     },
 };
 </script>
 
 <style scoped>
-
-
-
 
 .modal {
     position: fixed;

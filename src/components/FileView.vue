@@ -50,8 +50,7 @@
     <modal ref="modalFileInfo" :buttons="buttonsEdit" @response="fileEditDialogResponse">
         <file-info ref="fileInfo"></file-info>
     </modal>
-    <modal ref="modalFileDelete" :buttons="['Yes', 'No']" @response="deleteFileDialogResponse"></modal>
-    <modal ref="modalDirectoryDelete" :buttons="['Yes', 'No']" @response="deleteDirectoryDialogResponse"></modal>
+    <modal ref="modalDelete" :buttons="['Yes', 'No']"></modal>
     <modal ref="modalError"></modal>
     <file-drop v-if="havePermission" @dropFile="fileDrop"></file-drop>
     <upload-bin v-if="havePermission" ref="uploadBin" @upload="getFiles" :directory-id="currentTraversal"></upload-bin>

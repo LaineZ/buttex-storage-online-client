@@ -114,7 +114,11 @@ export default {
                     window.location.href = ENDPOINT + "/data/" + info.name;
                     break;
                 case 1:
-                    this.$refs.modalFileDelete.open("Proceed with file deletion? Once done, it's like closing Pandora's box – no turning back.");
+                    const choice = await this.$refs.modalDelete.openAsync(
+                        "Proceed with file deletion? Once done, it's like closing Pandora's box – no turning back.");
+                    if (choice == 0) {
+                        await this.deleteFile(this.selectedFileId);
+                    }
                     break;
                 case 2:
                     this.$refs.renameModal.open(info.name);
@@ -132,7 +136,11 @@ export default {
                     await this.openFolder(this.selectedDirectoryId);
                     break;
                 case 1:
-                    this.$refs.modalDirectoryDelete.open("Really delete directory? Make sure it's the path you want to tread.");
+                    const choice = await this.$refs.modalDelete.openAsync(
+                        "Really delete directory? Make sure it's the path you want to tread.");
+                    if (choice == 0) {
+                        await this.deleteDirectory(this.selectedDirectoryId);
+                    }
                     break;
             }
         },
@@ -223,23 +231,14 @@ export default {
                     await this.getFiles();
                     break;
                 case 1:
-                    this.$refs.modalFileDelete.open("Proceed with file deletion? Once done, it's like closing Pandora's box – no turning back.");
+                    const choice = await this.$refs.modalDelete.openAsync(
+                        "Proceed with file deletion? Once done, it's like closing Pandora's box – no turning back.");
+                    if (choice == 0) {
+                        await this.deleteFile(this.selectedFileId);
+                    }
                     break;
             }
         },
-
-        async deleteFileDialogResponse(index) {
-            if (index == 0) {
-                await this.deleteFile(this.selectedFileId);
-            }
-        },
-
-        async deleteDirectoryDialogResponse(index) {
-            if (index == 0) {
-                await this.deleteDirectory(this.selectedDirectoryId);
-            }
-        },
-
 
         async goBack() {
             if (this.currentTraversal > 0) {

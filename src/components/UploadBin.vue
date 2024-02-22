@@ -91,6 +91,7 @@ export default {
         },
 
         async uploadFiles() {
+
             for (let index = 0; index < this.files.length; index++){
                 const file = this.files[index];
                 try {
@@ -105,7 +106,6 @@ export default {
                 }
 
                 if (!file.xhr) {
-                    console.log("UPLOADING: ", file, index);
                     file.xhr = new XMLHttpRequest();
 
                     const promise = new Promise((resolve, reject) => {
