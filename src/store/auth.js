@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('auth', {
         id: 0,
         name: "Anonymous",
         nickname: "anonymous",
+        avatar_url: null,
         access_level: ACCESS_LEVEL_ANY,
         token: "",
     }),
@@ -14,6 +15,7 @@ export const useAuthStore = defineStore('auth', {
             this.id = info.id;
             this.name = info.name;
             this.nickname = info.nickname;
+            this.avatar_url = info.avatar_url;
             this.access_level = info.access_level;
             this.token = localStorage.getItem("token");
         },
