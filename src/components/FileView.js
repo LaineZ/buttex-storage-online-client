@@ -275,6 +275,10 @@ export default {
         fileDropButton(event) {
             const files = event.target.files;
             this.$refs.uploadBin.pushFiles(files);
+        },
+
+        openDocumentationPage() {
+            window.open(ENDPOINT + "/api/docs", "_blank").focus();
         }
     }
 }

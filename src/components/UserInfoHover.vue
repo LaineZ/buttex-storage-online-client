@@ -5,7 +5,8 @@
                 <LoadingOverlay :loading="loading" :dimming="true"/>
                 <div class="container">
                     <div class="user">
-                        <i class="fa fa-4x fa-user"></i>
+                        <img v-if="avatarUrl !== null" class="avatar" :src="avatarUrl"/>
+                        <i v-else class="fa fa-4x fa-user"></i>
                         <p style="text-align: center">{{ accessLevel }}</p>
                     </div>
                     <div>
@@ -46,6 +47,7 @@ export default {
             name: "",
             nickname: "",
             accessLevel: "",
+            avatarUrl: null,
             id: 0,
             position: null,
             show: false,
@@ -61,6 +63,7 @@ export default {
             this.name = authState.value.name;
             this.id = authState.value.id;
             this.nickname = authState.value.nickname;
+            this.avatarUrl = authState.value.avatar_url;
 
             switch (authState.value.access_level) {
                 case ACCESS_LEVEL_USER:
@@ -183,5 +186,10 @@ export default {
 .user {
     text-align: center;
     margin-right: 20px;
+}
+
+.avatar {
+    max-width: 64px;
+    max-height: 64px;
 }
 </style>

@@ -36,6 +36,13 @@ export default {
             resolvePromise: null,
         };
     },
+    mounted() {
+        window.addEventListener("keydown", event => {
+            if (this.closebtn && event.key == "Escape") {
+                this.close();
+            }
+        });
+    },
     props: {
         buttons: {
             type: Array,

@@ -14,6 +14,9 @@
           <button  v-if="havePermissionCreateDirectory" @click="$refs.createDirModal.open(currentTraversal)" title="Create directory">
               <i class="fa fa-folder"></i>
           </button>
+          <button @click="this.openDocumentationPage()" title="Documentation">
+            <i class="fa fa-book"></i>
+          </button>
           <div class="path">
               <div v-for="(directory, index) in directories" class="directory-traversal">
                 <p @click="goToDirectory(index)">{{ directory }}<i v-if="directories.length > 1 && index != directories.length - 1" class="fa fa-caret-right"></i></p>
