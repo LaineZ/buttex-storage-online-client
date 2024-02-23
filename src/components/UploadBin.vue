@@ -175,8 +175,12 @@ export default {
                         file.xhr.open("POST", ENDPOINT +
                             "/api/storage/set_file_content?file_id=" + file.id);
                     } else {
-                        file.xhr.open("POST", ENDPOINT +
-                            "/api/storage/create_file?parent_directory_id=" + this.directoryId);
+                        if (this.directoryId) {
+                            file.xhr.open("POST", ENDPOINT +
+                                "/api/storage/create_file?parent_directory_id=" + this.directoryId);
+                        } else {
+                            file.xhr.open("POST", ENDPOINT + "/api/storage/create_file");
+                        }
                     }
 
                     file.xhr.setRequestHeader("Authorization", localStorage.getItem('token'));

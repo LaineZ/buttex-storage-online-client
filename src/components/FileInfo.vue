@@ -79,7 +79,7 @@ export default {
         },
 
         canEdit() {
-            canEdit(this.info.user_id)
+            return canEdit(this.info.user_id);
         },
 
         formatBytes(bytes) {
