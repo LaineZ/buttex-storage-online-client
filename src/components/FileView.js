@@ -2,7 +2,13 @@ import {canEdit, RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
 import FileInfo from "./FileInfo.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
-import {ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER, ENDPOINT, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
+import {
+    ACCESS_LEVEL_MODERATOR,
+    ACCESS_LEVEL_USER,
+    ENDPOINT,
+    EXTENSION_MAPPING_ICONS, SORT_LAST_MODIFIED, SORT_NAME,
+    SORT_NONE, SORT_SIZE, SORT_UPLOAD_DATE, SORT_AUTHOR
+} from "../helpers/consts.js";
 import UserButton from "./UserButton.vue";
 import {useAuthStore} from "../store/auth.js";
 import {ref} from "vue";
@@ -11,6 +17,7 @@ import UploadBin from "./UploadBin.vue";
 import CreateDirectoryModal from "./CreateDirectoryModal.vue";
 import ContextMenu from "./ContextMenu.vue";
 import RenameModal from "./RenameModal.vue";
+import {fmtDate, formatBytes} from "../helpers/converterHelper.js";
 
 export default {
     name: "FileView",
@@ -32,7 +39,8 @@ export default {
             loading: false,
             startLoading: false,
             view: 1,
-            scale: '1x',
+            currentSort: -1,
+            reverseSort: false,
             selectedFileId: 0,
             selectedDirectoryId: 0,
             history: [],
@@ -92,6 +100,8 @@ export default {
         });
     },
     methods: {
+        fmtDate,
+        formatBytes,
         mapIcon(file_name) {
             const ext = file_name.split('.').pop()
 
@@ -129,6 +139,55 @@ export default {
             }
         },
 
+
+        sortByNamedProperty(name) {
+            if (!this.reverseSort) {
+                this.files.data.directories.sort((a, b) => a[name].localeCompare(b[name]));
+                this.files.data.files.sort((a, b) => a[name].localeCompare(b[name]));
+            } else {
+                this.files.data.directories.sort((a, b) => b[name].localeCompare(a[name]));
+                this.files.data.files.sort((a, b) => b[name].localeCompare(a[name]));
+            }
+        },
+
+        sortByNumericProperty(name) {
+            if (!this.reverseSort) {
+                this.files.data.directories.sort((a, b) => a[name] - b[name]);
+                this.files.data.files.sort((a, b) => a[name] - b[name]);
+            } else {
+                this.files.data.directories.sort((a, b) => b[name] - a[name]);
+                this.files.data.files.sort((a, b) => b[name] - a[name]);
+            }
+        },
+
+        sort(sort) {
+            if (this.currentSort == sort) {
+                this.reverseSort = !this.reverseSort;
+            }
+
+            this.currentSort = sort;
+
+            switch (this.currentSort) {
+                case SORT_NONE:
+                    // do nothing
+                    break;
+                case SORT_SIZE:
+                    this.sortByNumericProperty("size");
+                    break;
+                case SORT_NAME:
+                    this.sortByNamedProperty("name");
+                    break;
+                case SORT_AUTHOR:
+                    this.sortByNamedProperty("user_name");
+                    break;
+                case SORT_UPLOAD_DATE:
+                    this.sortByNumericProperty("creation_time");
+                    break;
+                case SORT_LAST_MODIFIED:
+                    this.sortByNumericProperty("modification_time");
+                    break;
+            }
+        },
 
         async handleDirectoryContextMenuItemClick(item) {
             switch (item) {

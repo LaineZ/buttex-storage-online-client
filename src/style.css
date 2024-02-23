@@ -7,6 +7,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --bg: #0e0e12;
+  --bg-checker: #17171e;
   --bg2: #1a1a24;
   --bg3: #333346;
   --fg: #e6e6ec;
@@ -27,15 +28,40 @@ ul {
   margin: 0;
 }
 
-i {
-  color: var(--fg2);
-}
-
 li {
   padding: 2px;
 }
 
 li:hover {
+  background-color: var(--bg2);
+}
+
+table {
+  margin: 0;
+  width: 100%;
+}
+
+i {
+  color: var(--fg2);
+}
+
+table tr {
+  line-height: 1.5;
+}
+
+table th {
+  user-select: none;
+}
+
+table td, table th {
+  padding: 5px;
+}
+
+table tr:nth-child(odd) {
+  background-color: var(--bg-checker);
+}
+
+table tr:hover {
   background-color: var(--bg2);
 }
 

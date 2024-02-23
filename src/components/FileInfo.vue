@@ -50,7 +50,7 @@ import Modal from "./Modal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
 import {EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
 import {RequestGET} from "../helpers/http.js";
-import {formatBytes} from "../helpers/converterHelper.js";
+import { formatBytes, fmtDate } from "../helpers/converterHelper.js";
 import { canEdit } from "../helpers/http.js";
 
 export default {
@@ -107,12 +107,7 @@ export default {
                 return "fa-file-o";
             }
         },
-
-        fmtDate(timestamp) {
-            const date = new Date(timestamp * 1000);
-            return `${date.getFullYear()}-${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}
-            ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-        }
+        fmtDate
     },
 }
 </script>

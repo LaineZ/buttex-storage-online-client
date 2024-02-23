@@ -9,6 +9,14 @@ export const ACCESS_LEVEL_ADMIN = 2;
 export const VIEW_LIST = 0;
 export const VIEW_TILES = 1;
 
+
+export const SORT_NONE = 0;
+export const SORT_NAME  = 1;
+export const SORT_AUTHOR = 2;
+export const SORT_UPLOAD_DATE = 3;
+export const SORT_LAST_MODIFIED = 4;
+export const SORT_SIZE = 5;
+
 export const EXTENSION_MAPPING_ICONS = {
     "image/png": "fa-file-picture-o",
     "image/jpg": "fa-file-picture-o",
@@ -30,6 +38,7 @@ export const EXTENSION_MAPPING_ICONS = {
     "audio/ogg": "fa-file-audio-o",
     "audio/aac": "fa-file-audio-o",
     "audio/flac": "fa-file-audio-o",
+    "audio/mpeg": "fa-file-audio-o",
     "application/pdf": "fa-file-pdf-o",
     "application/msword": "fa-file-word-o",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "fa-file-word-o",
@@ -43,6 +52,7 @@ export const EXTENSION_MAPPING_ICONS = {
     "application/xml": "fa-file-code-o",
     "text/html": "fa-file-code-o",
     "text/css": "fa-file-code-o",
+    "text/x-shellscript": "fa-file-code-o",
     "application/javascript": "fa-file-code-o",
     "text/jsx": "fa-file-code-o",
     "application/zip": "fa-file-archive-o",
