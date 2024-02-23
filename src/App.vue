@@ -12,6 +12,11 @@ export default {
     name: "App",
     async mounted() {
         await getUserInfo();
+    },
+    provide() {
+        return {
+            errorModalService: this.$refs.errorModalService
+        };
     }
 }
 </script>

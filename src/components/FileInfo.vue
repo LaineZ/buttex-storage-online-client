@@ -42,14 +42,13 @@
                 </tr>
             </table>
         </div>
-        <modal ref="modalError"></modal>
     </div>
 </template>
 
 <script>
 import Modal from "./Modal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
-import {ACCESS_LEVEL_MODERATOR, EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
+import {EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
 import {RequestGET} from "../helpers/http.js";
 import {formatBytes} from "../helpers/converterHelper.js";
 import { canEdit } from "../helpers/http.js";
@@ -94,7 +93,7 @@ export default {
                         new_file_name: this.info.name,
                     });
                 } catch (error) {
-                    this.$refs.modalError.open("Unable to save changes: " + error.error || error.toString());
+                    this.$show(error.error || error.toString());
                 }
             }
         },
