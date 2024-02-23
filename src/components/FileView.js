@@ -180,7 +180,7 @@ export default {
                 this.directories = split;
                 clearTimeout(loadingTimeout);
             } catch (error) {
-                this.$refs.modalError.open(error);
+                this.$show(error);
             }
             this.loading = false;
             this.startLoading = false;
@@ -208,7 +208,7 @@ export default {
                     file_id: file_id
                 });
             } catch (error) {
-                this.$refs.modalError.open(error.toString());
+                this.$show(error.toString());
             }
             await this.getFiles();
         },
@@ -219,7 +219,7 @@ export default {
                     directory_id: directory_id
                 });
             } catch (error) {
-                this.$refs.modalError.open(error.toString());
+                this.$show(error.toString());
             }
             await this.getFiles();
         },

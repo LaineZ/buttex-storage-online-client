@@ -1,7 +1,5 @@
 <script setup>
 import FileView from "./components/FileView.vue";
-
-
 </script>
 
 
@@ -13,11 +11,6 @@ export default {
     async mounted() {
         await getUserInfo();
     },
-    provide() {
-        return {
-            errorModalService: this.$refs.errorModalService
-        };
-    }
 }
 </script>
 

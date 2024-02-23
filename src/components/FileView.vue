@@ -54,7 +54,6 @@
         <file-info ref="fileInfo"></file-info>
     </modal>
     <modal ref="modalDelete" :buttons="['Yes', 'No']"></modal>
-    <modal ref="modalError"></modal>
     <file-drop v-if="havePermission" @dropFile="fileDrop"></file-drop>
     <upload-bin v-if="havePermission" ref="uploadBin" @upload="getFiles" :directory-id="currentTraversal"></upload-bin>
     <create-directory-modal ref="createDirModal" :directories="files.data.directories"  @created="getFiles"></create-directory-modal>

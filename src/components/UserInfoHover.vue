@@ -28,7 +28,6 @@
             </div>
         </div>
     </div>
-    <modal ref="modalError"></modal>
 </template>
 
 <script>
@@ -132,7 +131,7 @@ export default {
                 this.changeNickname = false;
 
             } catch (e) {
-                this.$refs.modalError.open("Unable to set nickname: " + e + " please try again");
+                this.$show("Unable to set nickname: " + e + " please try again");
             }
             this.loading = false;
         },
