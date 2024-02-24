@@ -1,7 +1,7 @@
 <template>
     <div v-if="visible" class="context-menu" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
         <ul>
-            <li v-for="(item, index) in items" @click="handleItemClick(index)"><i class="fa" :class="item.icon || ''"></i> {{ item.name || item }}</li>
+            <li v-for="(item, index) in items" @click="handleItemClick(item.id || index)"><i class="fa" :class="item.icon || ''"></i> {{ item.name || item }}</li>
         </ul>
     </div>
 </template>

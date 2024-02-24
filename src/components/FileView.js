@@ -18,6 +18,7 @@ import CreateDirectoryModal from "./CreateDirectoryModal.vue";
 import ContextMenu from "./ContextMenu.vue";
 import RenameModal from "./RenameModal.vue";
 import {fmtDate, formatBytes} from "../helpers/converterHelper.js";
+import * as Api from "../helpers/api.js";
 
 export default {
     name: "FileView",
@@ -34,8 +35,6 @@ export default {
     },
     data() {
         return {
-            username: '',
-            password: '',
             loading: false,
             startLoading: false,
             view: 1,
@@ -46,7 +45,6 @@ export default {
             history: [],
             currentTraversal: 0,
             userInfo: null,
-            buttonsEdit: ['Save changes', 'Delete file', 'Cancel'],
             directories: [],
             currentDirectoryOwnerId: 0,
             files: {
@@ -73,6 +71,55 @@ export default {
         },
         havePermissionCreateDirectory() {
             return canEdit(this.currentDirectoryOwnerId);
+        },
+
+        contextMenuDirectoryItems() {
+            const menu = [
+                {
+                    name: 'Open',
+                    icon: 'fa-angle-right'
+                },
+                {
+                    name: 'Delete',
+                    icon: 'fa-trash'
+                }
+            ];
+
+            if (!canEdit(this.currentDirectoryOwnerId)) {
+                menu.pop();
+            }
+            return menu;
+        },
+
+        contextMenuFileItems() {
+            const menu = [
+                {
+                    name: 'Open file',
+                    icon: 'fa-file',
+                    id: 0,
+                },
+                {
+                    name: 'Delete',
+                    icon: 'fa-trash',
+                    id: 1,
+                },
+                {
+                    name: 'Rename',
+                    icon: 'fa-i-cursor',
+                    id: 2,
+                },
+                {
+                    name: 'Properties',
+                    icon: 'fa-cogs',
+                    id: 3
+                },
+            ];
+
+            if (!canEdit(this.currentDirectoryOwnerId)) {
+                menu.splice(1, 2);
+            }
+
+            return menu;
         }
     },
     async mounted() {
@@ -85,10 +132,6 @@ export default {
         await this.getFiles();
         const authStore = useAuthStore();
         const authState = ref(authStore);
-
-        if (authState.value.access_level < ACCESS_LEVEL_MODERATOR) {
-            this.buttonsEdit = ["Cancel"];
-        }
 
 
         window.addEventListener("hashchange", async () => {
@@ -244,7 +287,6 @@ export default {
             this.loading = false;
             this.startLoading = false;
         },
-
         async openFolder(directory_id) {
             for (const directory of this.files.data.directories) {
                 if (directory.id == directory_id) {
@@ -262,41 +304,18 @@ export default {
         },
 
         async deleteFile(file_id) {
-            try {
-                await RequestGET("/api/storage/delete_file", {
-                    file_id: file_id
-                });
-            } catch (error) {
-                this.$show(error.toString());
-            }
+            await Api.deleteFile(this, file_id);
             await this.getFiles();
         },
 
         async deleteDirectory(directory_id) {
-            try {
-                await RequestGET("/api/storage/delete_directory", {
-                    directory_id: directory_id
-                });
-            } catch (error) {
-                this.$show(error.toString());
-            }
+            await Api.deleteDirectory(this, directory_id);
             await this.getFiles();
         },
 
-        async fileEditDialogResponse(index) {
-            switch (index) {
-                case 0:
-                    await this.$refs.fileInfo.saveChanges();
-                    await this.getFiles();
-                    break;
-                case 1:
-                    const choice = await this.$refs.modalDelete.openAsync(
-                        "Proceed with file deletion? Once done, it's like closing Pandora's box – no turning back.");
-                    if (choice == 0) {
-                        await this.deleteFile(this.selectedFileId);
-                    }
-                    break;
-            }
+        async fileEditDialogResponse() {
+            await this.$refs.modalFileInfo.close();
+            await this.getFiles();
         },
 
         async goBack() {

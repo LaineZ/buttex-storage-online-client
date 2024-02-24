@@ -102,8 +102,8 @@
             </div>
         </div>
     </div>
-    <modal ref="modalFileInfo" :buttons="buttonsEdit" @response="fileEditDialogResponse">
-        <file-info ref="fileInfo"></file-info>
+    <modal ref="modalFileInfo" :buttons="[]">
+        <file-info ref="fileInfo" @save="fileEditDialogResponse"></file-info>
     </modal>
     <modal ref="modalDelete" :buttons="['Yes', 'No']"></modal>
     <file-drop v-if="havePermission" @dropFile="fileDrop"></file-drop>
@@ -112,34 +112,8 @@
                             @created="getFiles"></create-directory-modal>
     <rename-modal ref="renameModal" @updated="getFiles" :entity-id="this.selectedFileId"
                   :is-directory="false"></rename-modal>
-    <context-menu ref="contextMenuFile" @itemClick="handleFileContextMenuItemClick" :items="[
-        {
-            name: 'Open file',
-            icon: 'fa-file'
-        },
-        {
-            name: 'Delete',
-            icon: 'fa-trash'
-        },
-        {
-            name: 'Rename',
-            icon: 'fa-i-cursor'
-        },
-        {
-            name: 'Properties',
-            icon: 'fa-cogs'
-        },
-    ]"></context-menu>
-    <context-menu ref="contextMenuDirectory" @itemClick="handleDirectoryContextMenuItemClick" :items="[
-        {
-            name: 'Open',
-            icon: 'fa-angle-right'
-        },
-        {
-            name: 'Delete',
-            icon: 'fa-trash'
-        }
-    ]"></context-menu>
+    <context-menu ref="contextMenuFile" @itemClick="handleFileContextMenuItemClick" :items="contextMenuFileItems"></context-menu>
+    <context-menu ref="contextMenuDirectory" @itemClick="handleDirectoryContextMenuItemClick" :items="contextMenuDirectoryItems"></context-menu>
 </template>
 <script src="./FileView.js"></script>
 
@@ -265,6 +239,10 @@ p {
     padding-top: 20%;
     text-align: center;
     color: var(--fg3);
+}
+
+table tr:hover {
+    background-color: var(--bg2);
 }
 
 @media (max-width: 600px) {

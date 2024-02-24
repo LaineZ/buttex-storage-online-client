@@ -52,5 +52,11 @@ export function canEdit(ownerId) {
     // https://storage.buttex.ru/api/docs/methods/storage/set_file_name.html
 
     const authStore = useAuthStore();
-    return authStore.access_level >= ACCESS_LEVEL_MODERATOR || authStore.id == ownerId;
+
+
+    if (ownerId == 0) {
+        return authStore.access_level >= ACCESS_LEVEL_MODERATOR;
+    } else {
+        return authStore.access_level >= ACCESS_LEVEL_MODERATOR || authStore.id == ownerId;
+    }
 }
