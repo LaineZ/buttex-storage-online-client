@@ -51,7 +51,7 @@
                         <i class="fa fa-folder-o" aria-hidden="true"></i> {{ folder.name }}
                     </td>
                     <td class="not-show-on-phone">
-                        {{ folder.user_name }}
+                        {{ folder.user_nickname }}
                     </td>
                     <td class="not-show-on-phone">
                         {{ fmtDate(folder.creation_time) }}
@@ -70,7 +70,7 @@
                         <i class="fa" :class="mapIcon(file.type)" aria-hidden="true"></i> {{ file.name }}
                     </td>
                     <td class="not-show-on-phone">
-                        {{ file.user_name }}
+                        {{ file.user_nickname }}
                     </td>
                     <td class="not-show-on-phone">
                         {{ fmtDate(file.creation_time) }}
