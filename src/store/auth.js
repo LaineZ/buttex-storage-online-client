@@ -22,6 +22,10 @@ export const useAuthStore = defineStore('auth', {
 
         setNick(nick) {
             this.nickname = nick;
+        },
+
+        setAvatar(url) {
+            this.avatar_url = url;
         }
     },
 });

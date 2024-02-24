@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import {useAuthStore} from "../store/auth.js";
 import Modal from "./Modal.vue";
 import { RequestGET } from "../helpers/http.js";
 
@@ -41,6 +42,8 @@ export default {
         async response(index) {
             if (index == 0) {
                 try {
+                    const authStore = useAuthStore();
+
                     await RequestGET("/api/storage/set_file_name", {
                         file_id: this.entityId,
                         new_file_name: this.newName

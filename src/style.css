@@ -125,3 +125,12 @@ table {
 th {
     padding-right: 10px;
 }
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    display: block;
+}
