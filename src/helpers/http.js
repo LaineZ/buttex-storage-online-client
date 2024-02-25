@@ -24,7 +24,12 @@ export async function RequestGET(path, getOptions = null) {
     }
 
     if (response.ok) {
-        return await response.json();
+        let responseText = await response.text();
+
+        if (responseText.length == 0) {
+            return true;
+        }
+        return JSON.parse(responseText);
     } else {
         let json = await response.json();
         let text = (await response).statusText;
@@ -37,6 +42,17 @@ export async function RequestGET(path, getOptions = null) {
 
 export async function getUserInfo() {
     const authStore = useAuthStore();
+
+    if (localStorage.getItem("token")) {
+        try {
+            await RequestGET("/api/users/validate_token");
+        } catch (e) {
+            console.log(e);
+            localStorage.setItem("token", "");
+            localStorage.setItem("user_id", "");
+            window.location.reload();
+        }
+    }
 
     try {
         let response = await RequestGET("/api/users/get_profile_info", {
@@ -59,4 +75,16 @@ export function canEdit(ownerId) {
     } else {
         return authStore.access_level >= ACCESS_LEVEL_MODERATOR || authStore.id == ownerId;
     }
+}
+
+
+export async function login(username, password) {
+    let response = await RequestGET("/api/users/get_token", {
+        user_name: username,
+        user_password: password,
+    });
+
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user_id", response.data.user_id);
+    await getUserInfo();
 }

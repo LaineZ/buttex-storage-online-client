@@ -37,7 +37,7 @@ import Modal from "./Modal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
 import UserInfoHover from "./UserInfoHover.vue";
 import {ACCESS_LEVEL_ANY} from "../helpers/consts.js";
-import {RequestGET, getUserInfo} from "../helpers/http.js";
+import {login} from "../helpers/http.js";
 
 
 export default {
@@ -76,17 +76,8 @@ export default {
             this.$refs.modalAuth.open();
 
             try {
-                let response = await RequestGET("/api/users/get_token", {
-                    user_name: this.login,
-                    user_password: this.password,
-                });
-
-                localStorage.setItem("token", response.data.token);
-                localStorage.setItem("user_id", response.data.user_id);
-
+                await login(this.login, this.password);
                 this.$refs.modalLogin.close();
-
-                await getUserInfo();
             } catch (error) {
                 console.log(error);
                 this.error = "The username or password seems to be playing hard to get – time to check credintials and try again!";

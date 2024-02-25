@@ -16,7 +16,7 @@ export async function deleteFile(componentContext, fileId) {
             file_id: fileId
         });
     } catch (error) {
-        this.$show(error.toString());
+        componentContext.$show(error.toString());
     }
 }
 

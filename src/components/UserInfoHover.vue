@@ -17,17 +17,21 @@
                 <div class="bottom">
                     <div style="display: flex">
                         <button class="nick-control-button" style="width: 50%; margin-right: 5px" v-if="changeNickname"
-                                @click="updateNickname"><i class="fa fa-check"></i> Apply nickname
+                                @click="updateNickname"><i class="fa fa-check"></i> Apply name
                         </button>
                         <button class="nick-control-button" style="width: 50%;" v-if="changeNickname" @click="resetNickname"><i class="fa fa-refresh"></i>
                              Reset nickname
                         </button>
                     </div>
+                    <button @click="$refs.modalProfile.open()"><i class="fa fa-user"></i> Profile</button>
                     <button class="logout-button" @click="logout"><i class="fa fa-power-off"></i> Logout</button>
                 </div>
             </div>
         </div>
     </div>
+    <modal ref="modalProfile" :buttons="[]">
+        <profile></profile>
+    </modal>
 </template>
 
 <script>
@@ -37,10 +41,11 @@ import {ACCESS_LEVEL_ADMIN, ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER} from "../
 import {RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
+import Profile from "./Profile.vue";
 
 export default {
     name: "UserInfoHover",
-    components: {LoadingOverlay, Modal},
+    components: {Profile, LoadingOverlay, Modal},
     data() {
         return {
             name: "",
@@ -52,8 +57,11 @@ export default {
             show: false,
             changeNickname: false,
             loading: false,
+            width: 100,
+            triggerElement: null,
         };
     },
+
     mounted() {
         const authStore = useAuthStore();
         const authState = ref(authStore);
@@ -63,6 +71,7 @@ export default {
             this.id = authState.value.id;
             this.nickname = authState.value.nickname;
             this.avatarUrl = authState.value.avatar_url;
+            this.width = authState.value.width;
 
             switch (authState.value.access_level) {
                 case ACCESS_LEVEL_USER:
@@ -79,24 +88,33 @@ export default {
     },
 
     methods: {
+        recomputeSize() {
+            const rect = this.triggerElement.getBoundingClientRect();
+            const triggerWidth = this.triggerElement.offsetWidth;
+            const tooltipWidth = this.$refs.hoverInfo.offsetWidth + 5;
+
+            let left = rect.left + window.scrollX - triggerWidth;
+
+
+            if (left + tooltipWidth > window.innerWidth) {
+                left = window.innerWidth - tooltipWidth;
+            }
+
+            this.position = {
+                top: `${rect.top + window.scrollY + this.triggerElement.offsetHeight + 5}px`,
+                left: `${left}px`
+            };
+        },
+
         openUserInfo(triggerElement) {
             this.show = true;
+            this.triggerElement = triggerElement;
             this.$nextTick(() => {
-                const rect = triggerElement.getBoundingClientRect();
-                const triggerWidth = triggerElement.offsetWidth;
-                const tooltipWidth = this.$refs.hoverInfo.offsetWidth + 5;
+                this.recomputeSize();
 
-                let left = rect.left + window.scrollX - triggerWidth;
-
-
-                if (left + tooltipWidth > window.innerWidth) {
-                    left = window.innerWidth - tooltipWidth;
-                }
-
-                this.position = {
-                    top: `${rect.top + window.scrollY + triggerElement.offsetHeight + 5}px`,
-                    left: `${left}px`
-                };
+                window.addEventListener("resize", () => {
+                    this.recomputeSize();
+                });
             });
         },
 

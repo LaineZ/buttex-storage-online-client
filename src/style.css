@@ -22,6 +22,11 @@ body {
     color: var(--fg);
 }
 
+main {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 ul {
     list-style-type: none;
     padding: 10px;
@@ -43,6 +48,10 @@ table {
 
 i {
     color: var(--fg2);
+}
+
+label {
+    font-size: 0.85em;
 }
 
 table tr {
@@ -82,11 +91,11 @@ input[type="text"], input[type="password"] {
 
 button:disabled {
     color: var(--fg2);
-    transition: background-color 0.2s;
+    transition: color 0.2s;
 }
 
 button:disabled:hover {
-    background-color: transparent !important;
+    background-color: var(--bg3);
     transition: background-color 0.2s;
 }
 
@@ -124,4 +133,16 @@ table {
 
 th {
     padding-right: 10px;
+}
+
+
+select {
+    padding: 5px;
+    width: 100%;
+    border: 1px solid var(--bg2);
+    background-color: var(--bg3);
+    color: var(--fg);
+    font-size: 1em;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
 }
