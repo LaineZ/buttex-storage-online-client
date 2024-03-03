@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', {
             this.avatar_url = info.avatar_url;
             this.access_level = info.access_level;
             this.token = localStorage.getItem("token");
-            this.width = localStorage.getItem("width");
+            this.width = localStorage.getItem("width") || 100;
         },
 
         setNick(nick) {
