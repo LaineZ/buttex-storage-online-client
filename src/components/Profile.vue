@@ -3,7 +3,7 @@
         <LoadingOverlay :loading="loading" :dimming="true"/>
         <div class="info">
             <div style="margin-right: 10px">
-                <img width="96" :src="avatarUrl">
+                <img width="96" :src="avatarUrl" @error="fallbackImg">
             </div>
             <div>
                 <h1>{{ nickname }}</h1>
@@ -24,6 +24,8 @@
                     <option value="1" :disabled="role >= 1">Moderator</option>
                     <option value="2" :disabled="role >= 2">Admin</option>
                 </select>
+                <label>Image avatar URL:</label>
+                <input type="text" placeholder="Image avatar URL" v-model="avatarUrl">
                 <label>Password:</label>
                 <input type="password" placeholder="Password" v-model="password">
                 <label>Password confirmation:</label>
@@ -83,6 +85,10 @@ export default {
                 return true;
             }
 
+            if (this.avatarUrl != authState.value.avatar_url) {
+                return true;
+            }
+
             return false;
         }
     },
@@ -93,10 +99,14 @@ export default {
             authStore.setWidth(this.width);
         },
 
+        fallbackImg(e) {
+          e.target.src = "user.png";
+        },
+
         async updateUserData() {
             this.loading = true;
             const authStore = useAuthStore();
-            const authState = ref(authStore);
+
             try {
                 if (this.password != this.confirmPassword) {
                     this.$show("Passwords do not match");
@@ -114,7 +124,12 @@ export default {
                     new_nickname: this.nickname,
                 });
 
+                await RequestGET("/api/users/set_avatar_url", {
+                    new_avatar_url: this.avatarUrl
+                });
+
                 authStore.setNick(this.nickname);
+                authStore.setAvatar(this.avatarUrl);
 
                 if (this.password.length > 0 || this.confirmPassword.length > 0) {
                     await RequestGET("/api/users/set_password", {
@@ -123,6 +138,8 @@ export default {
                     await login(this.name, this.password);
                     window.location.reload();
                 }
+
+                this.$show("Your changes are now as secure as Fort Knox – locked, loaded, and ready for action", "fa-check");
             } catch (e) {
                 this.$show(e.toString());
             }

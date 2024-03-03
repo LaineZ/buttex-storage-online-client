@@ -12,20 +12,12 @@
                         <p style="text-align: center">{{ accessLevel }}</p>
                     </div>
                     <div>
-                        <h2>{{ name }}</h2>
-                        <input @input="checkNickname" type="text" v-model="nickname" placeholder="Nickname...">
+                        <h2>{{ nickname }}</h2>
+                        <p>{{ name }}</p>
                     </div>
                 </div>
                 <div class="bottom">
-                    <div style="display: flex">
-                        <button class="nick-control-button" style="width: 50%; margin-right: 5px" v-if="changeNickname"
-                                @click="updateNickname"><i class="fa fa-check"></i> Apply name
-                        </button>
-                        <button class="nick-control-button" style="width: 50%;" v-if="changeNickname" @click="resetNickname"><i class="fa fa-refresh"></i>
-                             Reset nickname
-                        </button>
-                    </div>
-                    <button @click="$refs.modalProfile.open()"><i class="fa fa-user"></i> Profile</button>
+                    <button @click="openProfile"><i class="fa fa-user"></i> Profile</button>
                     <button class="logout-button" @click="logout"><i class="fa fa-power-off"></i> Logout</button>
                 </div>
             </div>
@@ -94,21 +86,30 @@ export default {
 
     methods: {
         recomputeSize() {
-            const rect = this.triggerElement.getBoundingClientRect();
-            const triggerWidth = this.triggerElement.offsetWidth;
-            const tooltipWidth = this.$refs.hoverInfo.offsetWidth + 5;
+            const info = this.$refs.hoverInfo;
 
-            let left = rect.left + window.scrollX - triggerWidth;
+            if (info) {
+                const rect = this.triggerElement.getBoundingClientRect();
+                const triggerWidth = this.triggerElement.offsetWidth;
+                const tooltipWidth = info.offsetWidth + 5;
+
+                let left = rect.left + window.scrollX - triggerWidth;
 
 
-            if (left + tooltipWidth > window.innerWidth) {
-                left = window.innerWidth - tooltipWidth;
+                if (left + tooltipWidth > window.innerWidth) {
+                    left = window.innerWidth - tooltipWidth;
+                }
+
+                this.position = {
+                    top: `${rect.top + window.scrollY + this.triggerElement.offsetHeight + 5}px`,
+                    left: `${left}px`
+                };
             }
+        },
 
-            this.position = {
-                top: `${rect.top + window.scrollY + this.triggerElement.offsetHeight + 5}px`,
-                left: `${left}px`
-            };
+        openProfile() {
+            this.$refs.modalProfile.open();
+            this.close();
         },
 
         openUserInfo(triggerElement) {
@@ -121,19 +122,6 @@ export default {
                     this.recomputeSize();
                 });
             });
-        },
-
-        checkNickname() {
-            const authStore = useAuthStore();
-            const authState = ref(authStore);
-            this.changeNickname = this.nickname && this.nickname != authState.value.nickname;
-        },
-
-        resetNickname() {
-            const authStore = useAuthStore();
-            const authState = ref(authStore);
-            this.nickname = authState.value.nickname;
-            this.checkNickname();
         },
 
         async logout() {
