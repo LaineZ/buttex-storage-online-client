@@ -113,6 +113,11 @@ export default {
                     icon: 'fa-cogs',
                     id: 3
                 },
+                {
+                    name: 'Copy URL',
+                    icon: 'fa-link',
+                    id: 4
+                }
             ];
 
             if (!canEdit(this.currentDirectoryOwnerId)) {
@@ -132,7 +137,6 @@ export default {
         await this.getFiles();
         const authStore = useAuthStore();
         const authState = ref(authStore);
-
 
         window.addEventListener("hashchange", async () => {
             const file = window.location.hash.substring(1);
@@ -179,6 +183,9 @@ export default {
                 case 3:
                     await this.openFileInfo(this.selectedFileId);
                     break;
+
+                case 4:
+                    await navigator.clipboard.writeText(this.getFileInfoById(this.selectedFileId).url);
             }
         },
 

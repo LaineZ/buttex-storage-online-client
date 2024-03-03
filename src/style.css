@@ -135,7 +135,6 @@ th {
     padding-right: 10px;
 }
 
-
 select {
     padding: 5px;
     width: 100%;
@@ -145,4 +144,13 @@ select {
     font-size: 1em;
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     box-sizing: border-box;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    display: block;
 }

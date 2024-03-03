@@ -5,7 +5,9 @@
                 <LoadingOverlay :loading="loading" :dimming="true"/>
                 <div class="container">
                     <div class="user">
-                        <img v-if="avatarUrl !== null" class="avatar" :src="avatarUrl"/>
+                        <div v-if="avatarUrl !== null" class="avatar" :style="{'background-image': `url('${avatarUrl}')`}" @click="changeAvatar">
+                            <i class="fa fa-4x fa-pencil avatar-hover"></i>
+                        </div>
                         <i v-else class="fa fa-4x fa-user"></i>
                         <p style="text-align: center">{{ accessLevel }}</p>
                     </div>
@@ -32,6 +34,8 @@
     <modal ref="modalProfile" :buttons="[]">
         <profile></profile>
     </modal>
+
+    <change-avatar-modal ref="modalAvatarUrl"/>
 </template>
 
 <script>
@@ -40,12 +44,13 @@ import {ref, watchEffect} from "vue";
 import {ACCESS_LEVEL_ADMIN, ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER} from "../helpers/consts.js";
 import {RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
+import ChangeAvatarModal from "./ChangeAvatarModal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
 import Profile from "./Profile.vue";
 
 export default {
     name: "UserInfoHover",
-    components: {Profile, LoadingOverlay, Modal},
+    components: {LoadingOverlay, Modal, ChangeAvatarModal, Profile},
     data() {
         return {
             name: "",
@@ -154,6 +159,10 @@ export default {
             this.loading = false;
         },
 
+        changeAvatar() {
+            this.$refs.modalAvatarUrl.open(this.avatarUrl);
+        },
+
         close() {
             this.show = false;
         }
@@ -205,8 +214,18 @@ export default {
     margin-right: 20px;
 }
 
-.avatar {
-    max-width: 64px;
-    max-height: 64px;
+.avatar-hover {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    transition: 0.2s opacity;
+    display: block;
+    cursor: pointer;
+}
+
+.avatar-hover:hover {
+    opacity: .5;
 }
 </style>

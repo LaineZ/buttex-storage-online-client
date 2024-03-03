@@ -41,6 +41,10 @@ export const useAuthStore = defineStore('auth', {
             } else {
                 this.mobility = false;
             }
+        },
+        
+        setAvatar(url) {
+            this.avatar_url = url;
         }
     },
 });
