@@ -10,16 +10,19 @@
                 </div>
             </div>
             <div class="info" v-if="info">
-                <input type="text" v-model="info.name" :disabled="!canEdit()">
+                <input type="text" v-model="info.name" :disabled="!canEdit()" @input="changed = true">
                 <table>
                     <tr>
                         <th>Uploaded by:</th>
                         <td>{{ info.user_name }}</td>
                     </tr>
-
                     <tr>
                         <th>Creation date:</th>
                         <td>{{ fmtDate(info.creation_time) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last modified:</th>
+                        <td>{{ fmtDate(info.modification_time) }}</td>
                     </tr>
                     <tr>
                         <th>Size:</th>
@@ -31,7 +34,7 @@
                     </tr>
                     <tr>
                         <th>Hidden:</th>
-                        <td><input type="checkbox" v-model="info.hidden" :disabled="!canEdit()"></td>
+                        <td><input type="checkbox" v-model="info.hidden" @click="changed = true" :disabled="!canEdit()"></td>
                     </tr>
                     <tr>
                         <th>File link:</th>
@@ -45,7 +48,7 @@
             </div>
         </div>
         <footer v-if="info && canEdit()">
-            <button :disabled="loading" @click="saveChanges"><i class="fa fa-check"></i> Save changes</button>
+            <button :disabled="loading || !changed" @click="saveChanges"><i class="fa fa-check"></i> Save changes</button>
             <button :disabled="loading" @click="retriveFile(fileId)"><i class="fa fa-refresh"></i> Refresh</button>
             <button :disabled="loading" @click="deleteFile"><i class="fa fa-trash"></i> Delete</button>
         </footer>
@@ -69,7 +72,8 @@ export default {
         return {
             info: null,
             loading: false,
-            fileId: null
+            fileId: null,
+            changed: false,
         }
     },
     emits: ["save"],

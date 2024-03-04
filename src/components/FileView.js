@@ -3,7 +3,6 @@ import Modal from "./Modal.vue";
 import FileInfo from "./FileInfo.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
 import {
-    ACCESS_LEVEL_MODERATOR,
     ACCESS_LEVEL_USER,
     ENDPOINT,
     EXTENSION_MAPPING_ICONS, SORT_LAST_MODIFIED, SORT_NAME,
