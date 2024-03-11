@@ -30,12 +30,6 @@
         </div>
         <div class="view">
             <LoadingOverlay :loading="loading" :dimming="true"/>
-            <p v-if="!haveFiles && !this.startLoading">
-                <img alt="empty folder" width="64" src="../assets/folder.svg">
-                <br>
-                This directory are emptier than a ghost town
-            </p>
-
             <table v-if="view == 0">
                 <tr class="not-show-on-phone">
                     <!-- check the consts in [src/helpers/consts.js] -->
@@ -100,6 +94,11 @@
                     </div>
                 </div>
             </div>
+            <p v-if="!haveFiles && !this.startLoading">
+                <img alt="empty folder" width="64" src="../assets/folder.svg">
+                <br>
+                This directory are emptier than a ghost town
+            </p>
         </div>
     </div>
     <modal ref="modalFileInfo" :buttons="[]">
