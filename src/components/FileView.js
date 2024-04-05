@@ -79,12 +79,23 @@ export default {
                     icon: 'fa-angle-right'
                 },
                 {
+                    name: 'Make hidden',
+                    icon: 'fa-eye'
+                },
+                {
                     name: 'Delete',
                     icon: 'fa-trash'
                 }
             ];
 
+            const dir = this.getDirectoryInfoById(this.selectedDirectoryId);
+
+            if (dir) {
+                menu[1].name = dir.hidden ? "Set visible" : "Set hidden";
+            }
+
             if (!canEdit(this.currentDirectoryOwnerId)) {
+                menu.pop();
                 menu.pop();
             }
             return menu;
@@ -163,6 +174,10 @@ export default {
             return this.files.data.files.find(x => x.id == id);
         },
 
+        getDirectoryInfoById(id) {
+            return this.files.data.directories.find(x => x.id == id);
+        },
+
         async handleFileContextMenuItemClick(item) {
             const info = this.getFileInfoById(this.selectedFileId);
             switch (item) {
@@ -184,7 +199,7 @@ export default {
                     break;
 
                 case 4:
-                    await navigator.clipboard.writeText(this.getFileInfoById(this.selectedFileId).url);
+                    await navigator.clipboard.writeText(encodeURI(this.getFileInfoById(this.selectedFileId).url));
             }
         },
 
@@ -239,12 +254,16 @@ export default {
         },
 
         async handleDirectoryContextMenuItemClick(item) {
+            let choice;
             switch (item) {
                 case 0:
                     await this.openFolder(this.selectedDirectoryId);
                     break;
                 case 1:
-                    const choice = await this.$refs.modalDelete.openAsync(
+                    await this.makeDirectoryHidden(this.selectedDirectoryId);
+                    break;
+                case 2:
+                    choice = await this.$refs.modalDelete.openAsync(
                         "Really delete directory? Make sure it's the path you want to tread.");
                     if (choice == 0) {
                         await this.deleteDirectory(this.selectedDirectoryId);
@@ -311,6 +330,12 @@ export default {
 
         async deleteFile(file_id) {
             await Api.deleteFile(this, file_id);
+            await this.getFiles();
+        },
+
+        async makeDirectoryHidden(directory_id) {
+            const hidden = this.getDirectoryInfoById(directory_id).hidden;
+            await Api.setDirectoryHiddenStatus(this, directory_id, !hidden);
             await this.getFiles();
         },
 

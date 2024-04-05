@@ -171,6 +171,8 @@
     margin: 0;
     padding: 0;
     line-height: 1.28;
+    max-height: 2.5em;
+    overflow: hidden;
 }
 
 .tile-summary small {
