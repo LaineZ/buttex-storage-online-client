@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div class="modal-bottom" v-if="buttons.length > 0">
-                    <button v-for="(button, index) in buttons" @click="response(index)">{{ button }}</button>
+                    <button v-for="(button, index) in buttons" @click="response(index)" :title="showTitle(index)">{{ button }}</button>
                 </div>
             </div>
         </div>
@@ -41,6 +41,11 @@ export default {
             if (this.closebtn && event.key == "Escape") {
                 this.close();
             }
+
+            if (this.show && event.key == "Enter") {
+                // Confirm
+                this.response(0);
+            }
         });
     },
     props: {
@@ -55,6 +60,14 @@ export default {
     },
     emits: ["response", "close", "open"],
     methods: {
+        showTitle(index) {
+            switch (index) {
+                case 0:
+                    return "Hotkey: [Enter]"
+                case 1:
+                    return "Hotkey: [Escape]"
+            }
+        },
         open(text = "", icon = "fa-exclamation-triangle") {
             this.text = text;
             this.icon = icon;

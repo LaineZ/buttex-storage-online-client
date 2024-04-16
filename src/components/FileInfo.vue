@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="info" v-if="info">
-                <input type="text" v-model="info.name" :disabled="!canEdit()" @input="changed = true">
+                <input type="text" v-model="info.name" :disabled="!canEdit()">
                 <table>
                     <tr>
                         <th>Uploaded by:</th>
@@ -34,7 +34,7 @@
                     </tr>
                     <tr>
                         <th>Hidden:</th>
-                        <td><input type="checkbox" v-model="info.hidden" @click="changed = true" :disabled="!canEdit()"></td>
+                        <td><input type="checkbox" v-model="info.hidden" :disabled="!canEdit()"></td>
                     </tr>
                     <tr>
                         <th>File link:</th>
@@ -48,7 +48,7 @@
             </div>
         </div>
         <footer v-if="info && canEdit()">
-            <button :disabled="loading || !changed" @click="saveChanges"><i class="fa fa-check"></i> Save changes</button>
+            <button :disabled="loading || !isAltered" @click="saveChanges"><i class="fa fa-check"></i> Save changes</button>
             <button :disabled="loading" @click="retriveFile(fileId)"><i class="fa fa-refresh"></i> Refresh</button>
             <button :disabled="loading" @click="deleteFile"><i class="fa fa-trash"></i> Delete</button>
         </footer>
@@ -71,9 +71,15 @@ export default {
     data() {
         return {
             info: null,
+            originalInformation: null,
             loading: false,
             fileId: null,
-            changed: false,
+        }
+    },
+    computed: {
+        isAltered() {
+            console.log(this.originalInformation.name, this.info.name);
+            return this.originalInformation.name != this.info.name || this.originalInformation.hidden !== this.info.hidden;
         }
     },
     emits: ["save"],
@@ -86,6 +92,8 @@ export default {
                     file_id: this.fileId
                 });
                 this.info = response.data;
+                this.originalInformation = { ...response.data };
+
                 this.$forceUpdate();
             } catch (e) {
                 this.$refs.modalError.open(e.toString())
@@ -105,15 +113,16 @@ export default {
             this.loading = true;
             if (canEdit(this.info.user_id)) {
                 try {
-                    await RequestGET("/api/storage/set_file_name", {
-                        file_id: this.info.id,
-                        new_file_name: this.info.name,
-                    });
+                    if (this.originalInformation.name != this.info.name) {
+                        await RequestGET("/api/storage/set_file_name", {
+                            file_id: this.info.id,
+                            new_file_name: this.info.name,
+                        });
+                    }
                     await RequestGET("/api/storage/set_file_hidden", {
                         file_id: this.info.id,
-                        hidden: this.info.hidden,
+                        hidden: this.info.hidden ? 1 : 0,
                     });
-
                     this.$emit("save");
                 } catch (error) {
                     this.$show(error.error || error.toString());

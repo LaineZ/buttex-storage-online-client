@@ -22,13 +22,14 @@
 <script>
 import Modal from "./Modal.vue";
 import { RequestGET } from "../helpers/http.js";
+import { generateName } from "../helpers/nameGenerator.js";
 
 export default {
     name: "CreateDirectoryModal",
     components: {Modal},
     data() {
         return {
-            filename: "New folder " + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+            filename: generateName(),
             hidden: false,
             parentDirectoryId: 0,
             error: "",

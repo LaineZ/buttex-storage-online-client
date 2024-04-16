@@ -56,7 +56,7 @@ export default {
 }
 
 .context-menu i {
-    width: 16px;
+    width: 24px;
     text-align: center;
 }
 </style>

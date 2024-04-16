@@ -312,6 +312,7 @@ export default {
             this.loading = false;
             this.startLoading = false;
         },
+
         async openFolder(directory_id) {
             for (const directory of this.files.data.directories) {
                 if (directory.id == directory_id) {

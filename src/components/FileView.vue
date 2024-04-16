@@ -138,6 +138,7 @@
 
 .controls button {
     background-color: transparent;
+    width: 32px;
 }
 
 .controls button:hover {
