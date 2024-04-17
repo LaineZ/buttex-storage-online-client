@@ -15,6 +15,7 @@
 import Modal from "./Modal.vue";
 import { RequestGET   } from "../helpers/http.js";
 import { useAuthStore } from "../store/auth.js";
+import { setUserAvatar } from "../helpers/api.js";
 
 export default {
     name: "ChangeAvatarModal",
@@ -32,13 +33,7 @@ export default {
         async response(index) {
             if (index == 0) {
                 try {
-                    const authStore = useAuthStore();
-
-                    await RequestGET("/api/users/set_avatar_url", {
-                        new_avatar_url: this.newAvatarUrl
-                    });
-
-                    authStore.setAvatar(this.newAvatarUrl);
+                    await setUserAvatar(this.newAvatarUrl);
                     this.$emit("updated");
                 } catch (e) {
                     this.$refs.modalAvatarUrl.open();

@@ -1,4 +1,5 @@
 import {RequestGET} from "./http.js";
+import {useAuthStore} from "../store/auth.js";
 
 export async function deleteDirectory(componentContext, directoryId) {
     try {
@@ -31,3 +32,12 @@ export async function deleteFile(componentContext, fileId) {
     }
 }
 
+export async function setUserAvatar(url) {
+    const authStore = useAuthStore();
+
+    await RequestGET("/api/users/set_avatar_url", {
+        new_avatar_url: url
+    });
+
+    authStore.setAvatar(url);
+}

@@ -18,6 +18,7 @@ import ContextMenu from "./ContextMenu.vue";
 import RenameModal from "./RenameModal.vue";
 import {fmtDate, formatBytes} from "../helpers/converterHelper.js";
 import * as Api from "../helpers/api.js";
+import {setUserAvatar} from "../helpers/api.js";
 
 export default {
     name: "FileView",
@@ -43,7 +44,6 @@ export default {
             selectedDirectoryId: 0,
             history: [],
             currentTraversal: 0,
-            userInfo: null,
             directories: [],
             currentDirectoryOwnerId: 0,
             files: {
@@ -134,6 +134,18 @@ export default {
                 menu.splice(1, 2);
             }
 
+
+            const file = this.getFileInfoById(this.selectedFileId);
+            const authStore = useAuthStore();
+
+            if (authStore.access_level > -1 && file && file.type.startsWith("image/")) {
+                menu.push({
+                    name: 'Set as user profile image',
+                    icon: 'fa-image',
+                    id: 5
+                })
+            }
+
             return menu;
         }
     },
@@ -197,9 +209,13 @@ export default {
                 case 3:
                     await this.openFileInfo(this.selectedFileId);
                     break;
-
                 case 4:
                     await navigator.clipboard.writeText(encodeURI(this.getFileInfoById(this.selectedFileId).url));
+                    break;
+                case 5:
+                    await setUserAvatar(info.permanent_url);
+                    this.$show("Avatar was set successfully");
+                    break;
             }
         },
 
