@@ -3,8 +3,7 @@
         <div class="controls">
             <button @click="goBack" title="Go up" :disabled="currentTraversal == 0 || loading"><i
                     class="fa fa-arrow-left"></i></button>
-            <button @click="getFiles" title="Refresh listing" :disabled="startLoading"
-                    :class="startLoading ? 'fa-spin' : ''"><i class="fa fa-refresh"></i></button>
+            <button @click="getFiles" title="Refresh listing" :disabled="startLoading"><i :class="startLoading ? 'fa-spin' : ''" class="fa fa-refresh"></i></button>
             <button @click="view == 0 ? view = 1 : view = 0" title="Switch view">
                 <i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i>
             </button>

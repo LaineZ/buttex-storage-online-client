@@ -158,7 +158,6 @@ export default {
 
         await this.getFiles();
         const authStore = useAuthStore();
-        const authState = ref(authStore);
 
         window.addEventListener("hashchange", async () => {
             const file = window.location.hash.substring(1);
