@@ -250,9 +250,5 @@ table tr:hover {
     .path {
         display: none;
     }
-
-    .not-show-on-phone {
-        display: none;
-    }
 }
 </style>

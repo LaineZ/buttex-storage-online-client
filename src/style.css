@@ -60,14 +60,23 @@ table tr {
 
 table th {
     user-select: none;
+    padding-right: 10px;
 }
 
 table td, table th {
     padding: 5px;
+    word-break: break-all;
 }
 
 table tr:nth-child(odd) {
     background-color: var(--bg-checker);
+}
+
+table {
+    text-align: left;
+    border: none;
+    line-height: 1.2;
+    table-layout: fixed;
 }
 
 button, input[type="submit"] {
@@ -125,15 +134,6 @@ p {
     margin: 0;
 }
 
-table {
-    text-align: left;
-    border: none;
-    line-height: 1.2;
-}
-
-th {
-    padding-right: 10px;
-}
 
 select {
     padding: 5px;
@@ -153,4 +153,10 @@ select {
     background-size: cover;
     position: relative;
     display: block;
+}
+
+@media (max-width: 600px) {
+    .not-show-on-phone {
+        display: none;
+    }
 }
