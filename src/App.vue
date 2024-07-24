@@ -20,7 +20,7 @@ export default {
         const authStore = useAuthStore();
 
         watchEffect(() => {
-            this.width = authStore.width;
+            this.width = authStore.mobility ? 100 : authStore.width;
         });
 
         authStore.checkSize();

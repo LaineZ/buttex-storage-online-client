@@ -12,8 +12,9 @@
         </div>
         <div>
             <h2>System settings</h2>
-            <label>Window width {{ width }}%</label>
+            <label>Window width {{ mobility ? 100 : width }}%</label>
             <input :disabled="mobility" type="range" min="60" max="100" v-model="width" @input="updateWidth">
+            <small v-if="mobility" style="color: rgb(200, 200, 100)">The window width is maxed out at 100% to ensure everything fits like a glove on your low-resolution display.</small>
             <h2>User settings</h2>
             <form @submit.prevent="updateUserData">
                 <label>Name:</label>

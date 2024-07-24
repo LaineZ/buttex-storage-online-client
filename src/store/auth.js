@@ -35,12 +35,7 @@ export const useAuthStore = defineStore('auth', {
 
         checkSize() {
             // мобильность
-            if (window.innerWidth <= 1500) {
-                this.width = 100;
-                this.mobility = true;
-            } else {
-                this.mobility = false;
-            }
+            this.mobility = window.innerWidth <= 1500;
         },
         
         setAvatar(url) {

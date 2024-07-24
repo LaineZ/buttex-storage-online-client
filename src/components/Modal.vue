@@ -130,6 +130,8 @@ export default {
     margin: 20px auto;
     max-width: 95vw;
     box-shadow: 0 0 30px rgba(14, 14, 18, 0.7);
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 .close-button {
@@ -147,6 +149,12 @@ export default {
 
 .modal-top {
     display: flex;
+    position: sticky;
+    top: 0;
+    min-height: 1em;
+    background-color: var(--bg);
+    width: 100%;
+    z-index: 1;
 }
 
 .modal-fade-enter-active,

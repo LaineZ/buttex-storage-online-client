@@ -4,7 +4,7 @@
             <button @click="goBack" title="Go up" :disabled="currentTraversal == 0 || loading"><i
                     class="fa fa-arrow-left"></i></button>
             <button @click="getFiles" title="Refresh listing" :disabled="startLoading"><i :class="startLoading ? 'fa-spin' : ''" class="fa fa-refresh"></i></button>
-            <button @click="view == 0 ? view = 1 : view = 0" title="Switch view">
+            <button @click="switchView" title="Switch view">
                 <i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i>
             </button>
             <button v-if="havePermission" title="Upload" class="upload-btn">
@@ -78,20 +78,12 @@
             </table>
 
             <div v-if="view == 1" class="tiles">
-                <div class="tile" v-for="folder in files.data.directories" @click="openFolder(folder.id)"
-                     @contextmenu.prevent="openDirectoryContextMenu($event, folder.id)">
-                    <i class="fa fa-folder-o fa-3x" aria-hidden="true"></i> {{ folder.name }}
-                </div>
-                <div class="tile" v-for="file in files.data.files" @click="openFileInfo(file.id)"
-                     @contextmenu.prevent="openFileContextMenu($event, file.id)">
-                    <img alt="file" width="41" v-if="file.has_preview == 1"
-                         :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + file.id">
-                    <i v-else class="fa fa-3x" :class="mapIcon(file.type)" aria-hidden="true"></i>
-                    <div class="tile-summary">
-                        <p>{{ file.name }}</p>
-                        <small>{{ formatBytes(file.size)}}</small>
-                    </div>
-                </div>
+                <FileViewTile v-for="folder in files.data.directories"
+                              :entry="folder" @click="openFolder(folder.id)"
+                              @contextmenu.prevent="openDirectoryContextMenu($event, folder.id)"></FileViewTile>
+                <FileViewTile v-for="file in files.data.files"
+                              :entry="file" @click="openFileInfo(file.id)"
+                              @contextmenu.prevent="openFileContextMenu($event, file.id)"></FileViewTile>
             </div>
             <p v-if="!haveFiles && !this.startLoading">
                 <img alt="empty folder" width="64" src="../assets/folder.svg">
@@ -147,44 +139,6 @@
 .tiles {
     display: flex;
     flex-wrap: wrap;
-}
-
-.tile {
-    width: 20%;
-    max-width: 300px;
-    min-width: 256px;
-    height: 48px;
-    padding: 10px;
-    display: flex;
-    place-items: center;
-    cursor: pointer;
-}
-
-.tile-summary {
-    overflow: hidden;
-    height: 100%;
-}
-
-.tile-summary p {
-    text-align: left;
-    color: var(--fg);
-    margin: 0;
-    padding: 0;
-    line-height: 1.28;
-    max-height: 2.5em;
-    overflow: hidden;
-}
-
-.tile-summary small {
-    color: var(--fg2);
-}
-
-.tile:hover {
-    background-color: var(--bg2);
-}
-
-.tile i, .tile img {
-    margin-right: 10px;
 }
 
 .upload-btn {

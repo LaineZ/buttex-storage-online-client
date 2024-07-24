@@ -1,6 +1,6 @@
 <template>
     <modal ref="modalDir" :buttons="['Create', 'Cancel']" @response="response">
-        <div style="display: flex; place-items: center;">
+        <div style="display: flex; place-items: center; max-width: 400px;">
             <div style="margin-right: 20px">
                 <i class="fa fa-folder fa-4x"></i>
             </div>
@@ -69,6 +69,7 @@ export default {
 
         open(dirId) {
             this.error = null;
+            this.filename = generateName()
             this.parentDirectoryId = dirId;
             this.$refs.modalDir.open();
         }

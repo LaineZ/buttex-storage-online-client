@@ -10,7 +10,6 @@ import {
 } from "../helpers/consts.js";
 import UserButton from "./UserButton.vue";
 import {useAuthStore} from "../store/auth.js";
-import {ref} from "vue";
 import FileDrop from "./FileDrop.vue";
 import UploadBin from "./UploadBin.vue";
 import CreateDirectoryModal from "./CreateDirectoryModal.vue";
@@ -19,10 +18,12 @@ import RenameModal from "./RenameModal.vue";
 import {fmtDate, formatBytes} from "../helpers/converterHelper.js";
 import * as Api from "../helpers/api.js";
 import {setUserAvatar} from "../helpers/api.js";
+import FileViewTile from "./FileViewTile.vue";
 
 export default {
     name: "FileView",
     components: {
+        FileViewTile,
         RenameModal,
         ContextMenu,
         CreateDirectoryModal,
@@ -37,7 +38,7 @@ export default {
         return {
             loading: false,
             startLoading: false,
-            view: 1,
+            view: localStorage.getItem("view") ?? 1,
             currentSort: -1,
             reverseSort: false,
             selectedFileId: 0,
@@ -179,7 +180,6 @@ export default {
                 return "fa-file-o";
             }
         },
-
 
         getFileInfoById(id) {
             return this.files.data.files.find(x => x.id == id);
@@ -404,6 +404,11 @@ export default {
 
         openDocumentationPage() {
             window.open(ENDPOINT + "/api/docs", "_blank").focus();
+        },
+
+        switchView() {
+            this.view == 0 ? this.view = 1 : this.view = 0;
+            localStorage.setItem("view", this.view);
         }
     }
 }

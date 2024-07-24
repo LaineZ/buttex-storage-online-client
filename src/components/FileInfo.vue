@@ -59,9 +59,8 @@
 <script>
 import Modal from "./Modal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
-import {EXTENSION_MAPPING_ICONS} from "../helpers/consts.js";
 import {RequestGET} from "../helpers/http.js";
-import { formatBytes, fmtDate } from "../helpers/converterHelper.js";
+import { formatBytes, fmtDate, mapIcon } from "../helpers/converterHelper.js";
 import { canEdit } from "../helpers/http.js";
 import * as Api from "../helpers/api.js";
 
@@ -140,15 +139,7 @@ export default {
             }
         },
 
-        mapIcon(file_name) {
-            const ext = file_name.split('.').pop()
-
-            if (EXTENSION_MAPPING_ICONS[ext] !== undefined) {
-                return EXTENSION_MAPPING_ICONS[ext]
-            } else {
-                return "fa-file-o";
-            }
-        },
+        mapIcon,
         fmtDate
     },
 }
@@ -159,6 +150,8 @@ export default {
     display: flex;
     min-width: 64px;
     min-height: 64px;
+    width: 50vw;
+    max-width: 800px;
 }
 
 .wrapper {
@@ -179,6 +172,8 @@ input {
 @media (max-width: 700px) {
     .main {
         flex-direction: column;
+        max-width: unset;
+        width: unset;
     }
 }
 
