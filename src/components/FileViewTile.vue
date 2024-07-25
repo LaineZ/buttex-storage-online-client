@@ -52,6 +52,7 @@ export default {
     height: 48px;
     background-repeat: no-repeat;
     background-size: contain;
+    background-position: center;
     margin-right: 10px;
 }
 
