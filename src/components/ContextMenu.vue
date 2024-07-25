@@ -2,7 +2,22 @@
     <transition name="modal-fade">
         <div v-if="visible" class="context-menu" :style="{ top: `${position.y}px`, left: `${position.x}px` }" ref="ctxMenu">
             <ul>
-                <li v-for="(item, index) in items" @click="handleItemClick(item.id || index)"><i class="fa" :class="item.icon || ''"></i> {{ item.name || item }}</li>
+                <template v-for="(item, index) in items">
+                    <li
+                        v-if="item.name"
+                        :class="{ 'li-critical': item.critical }"
+                        @click="handleItemClick(item.id || index)"
+                    >
+                        <i
+                            class="fa"
+                            :class="item.icon || ''"
+                        />
+                        
+                        {{ item.name || item }}
+                    </li>
+                    
+                    <hr v-else/>
+                </template>
             </ul>
         </div>
     </transition>
@@ -61,21 +76,47 @@ export default {
 .context-menu {
     position: fixed;
     z-index: 1000;
-    background-color: var(--bg3);
-    border: 1px solid var(--bg2);
+    
     margin: 0;
+    padding: 0;
+    
+    background-color: var(--bg6);
+    
+    border: 1px solid var(--bg4);
+    border-radius: 5px;
+    
     cursor: pointer;
     transition: opacity 0.2s ease-in-out;
 }
 
+.context-menu ul {
+    padding: 0;
+}
+
 .context-menu li {
-    padding: 8px;
+    padding: 8px 40px 8px 4px;
     margin: 0;
 }
 
+.li-critical {
+    color: var(--fg-critical);
+}
+
 .context-menu i {
-    width: 24px;
+    width: 30px;
     text-align: center;
+    color: inherit;
+    opacity: 0.5;
+}
+
+.context-menu hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid var(--bg3);
+    
+    margin: 0;
+    padding: 0;
 }
 
 .modal-fade-enter-active,

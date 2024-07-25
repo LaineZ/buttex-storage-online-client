@@ -25,11 +25,21 @@ export default {
     <div class="tile" v-if="isDirectory" v-bind="$attrs">
         <i class="fa fa-folder-o fa-3x" aria-hidden="true"></i> {{ entry.name }}
     </div>
+    
     <div class="tile" v-else v-bind="$attrs">
-        <div v-if="entry.has_preview" class="tile-image" :style="{ 'background-image': `url('https://storage.buttex.ru/api/storage/get_file_preview?file_id=${entry.id}')`}"></div>
+        <div
+            v-if="entry.has_preview"
+            class="tile-image"
+            :style="{
+                'background-image': `url('https://storage.buttex.ru/api/storage/get_file_preview?file_id=${entry.id}')`
+            }"
+        />
+       
         <i v-else class="fa fa-3x" :class="mapIcon(entry.type)" aria-hidden="true"></i>
+       
         <div class="tile-summary">
             <p>{{ entry.name }}</p>
+            
             <small>{{ formatBytes(entry.size) }}</small>
         </div>
     </div>
@@ -40,11 +50,21 @@ export default {
     width: 20%;
     max-width: 300px;
     min-width: 256px;
+    
     height: 48px;
-    padding: 10px;
+    
+    padding: 8px;
+    
+    border: 1px solid transparent;
+    border-radius: 5px;
+    
     display: flex;
+    gap: 12px;
     place-items: center;
+    
     cursor: pointer;
+    
+    transition: transform 0.1s;
 }
 
 .tile-image {
@@ -53,7 +73,6 @@ export default {
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    margin-right: 10px;
 }
 
 .tile-summary {
@@ -64,22 +83,35 @@ export default {
 .tile-summary p {
     text-align: left;
     color: var(--fg);
+    
     margin: 0;
     padding: 0;
+    
     line-height: 1.28;
     max-height: 2.5em;
     overflow: hidden;
 }
 
 .tile-summary small {
-    color: var(--fg2);
+    color: var(--fg5);
 }
 
 .tile:hover {
-    background-color: var(--bg2);
+    background-color: var(--bg4);
+    border-color: var(--bg5);
+    
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
 }
 
-.tile i {
-    margin-right: 10px;
+.tile:active {
+    transform: scale(0.985);
+}
+
+@media (max-width: 700px) {
+    .tile {
+        width: 100%;
+        max-width: none;
+        min-width: auto;
+    }
 }
 </style>
