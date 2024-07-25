@@ -33,7 +33,13 @@ export default {
 </script>
 
 <template>
-    <main :style="{ width: width + '%' }">
-        <file-view></file-view>
+    <main
+        style="
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        "
+    >
+        <file-view :style="{ width: width + '%' }"/>
     </main>
 </template>

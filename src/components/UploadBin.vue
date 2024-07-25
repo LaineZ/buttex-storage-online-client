@@ -211,7 +211,7 @@ export default {
     position: fixed;
     right: 0;
     bottom: 0;
-    background-color: var(--bg3);
+    background-color: var(--bg4);
     width: 25vw;
     min-width: 200px;
     max-height: 100vh;

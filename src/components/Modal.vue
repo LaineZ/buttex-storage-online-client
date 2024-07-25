@@ -3,23 +3,36 @@
         <div class="modal" v-if="show" @click="close">
             <div class="modal-content" @click.stop>
                 <div class="modal-top">
-                    <div class="close-button" @click="close" v-if="closebtn">
+                    <button class="close-button" @click="close" v-if="closebtn">
                         <i style="vertical-align: top;" class="fa fa-remove"></i>
-                    </div>
+                    </button>
                 </div>
+                
                 <div style="padding: 20px">
                     <div v-if="text.length === 0">
                         <slot></slot>
                     </div>
+                    
                     <div v-else style="display: flex; min-width: 15vw;">
                         <div style="margin-right: 20px">
                             <i class="fa fa-4x" :class="icon"></i>
                         </div>
+                        
                         <p>{{ text }}</p>
                     </div>
                 </div>
-                <div class="modal-bottom" v-if="buttons.length > 0">
-                    <button v-for="(button, index) in buttons" @click="response(index)" :title="showTitle(index)">{{ button }}</button>
+                
+                <div
+                    v-if="buttons.length > 0"
+                    class="modal-bottom"
+                >
+                    <button
+                        v-for="(button, index) in buttons"
+                        :title="showTitle(index)"
+                        @click="response(index)"
+                    >
+                        {{ button }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -108,43 +121,53 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
+    
     background: rgba(83, 83, 115, 0.6);
     backdrop-filter: blur(5px);
+    
     z-index: 1000;
+    
     display: flex;
     place-items: center;
     transition: opacity 0.2s ease-in-out;
 }
 
 .modal-bottom {
-    background-color: var(--bg3);
     padding: 10px;
+    
+    display: flex;
+    gap: 10px;
+    
+    background-color: var(--bg3);
 }
 
 .modal-bottom button {
-    margin-right: 10px;
+    padding: 10px 15px;
 }
 
 .modal-content {
-    background-color: var(--bg);
-    margin: 20px auto;
     max-width: 95vw;
-    box-shadow: 0 0 30px rgba(14, 14, 18, 0.7);
     max-height: 100vh;
+    
+    margin: 20px auto;
+    
+    border-radius: 5px;
+    
+    background-color: var(--bg);
+    box-shadow: 0 0 30px rgba(14, 14, 18, 0.7);
+    
     overflow-y: auto;
 }
 
 .close-button {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
+    
+    background-color: transparent;
     padding: 2px;
+    
     text-align: center;
     margin: 4px 4px 4px auto;
-    color: var(--fg);
-}
-
-.close-button:hover {
-    background-color: var(--fg2);
 }
 
 .modal-top {

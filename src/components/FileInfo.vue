@@ -1,14 +1,18 @@
 <template>
     <div class="wrapper">
         <LoadingOverlay :loading="loading" :dimming="false"/>
+        
         <div class="main">
             <div class="icon" v-if="info">
-                <img width="64" v-if="info.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + info.id">
+                <img width="90" v-if="info.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + info.id">
+                
                 <i v-else class="fa fa-4x" :class="mapIcon(info.type)" style="display: block;"></i>
+                
                 <div class="preview">
                     <h4>File</h4>
                 </div>
             </div>
+            
             <div class="info" v-if="info">
                 <input type="text" v-model="info.name" :disabled="!canEdit()">
                 <table>
@@ -47,11 +51,13 @@
                 </table>
             </div>
         </div>
+        
         <footer v-if="info && canEdit()">
             <button :disabled="loading || !isAltered" @click="saveChanges"><i class="fa fa-check"></i> Save changes</button>
             <button :disabled="loading" @click="retriveFile(fileId)"><i class="fa fa-refresh"></i> Refresh</button>
             <button :disabled="loading" @click="deleteFile"><i class="fa fa-trash"></i> Delete</button>
         </footer>
+        
         <modal ref="modalDelete" :buttons="['Yes', 'No']"></modal>
     </div>
 </template>

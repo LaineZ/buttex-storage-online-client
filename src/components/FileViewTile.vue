@@ -97,8 +97,8 @@ export default {
 }
 
 .tile:hover {
-    background-color: var(--bg3);
-    border-color: var(--bg4);
+    background-color: var(--bg4);
+    border-color: var(--bg5);
     
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
 }

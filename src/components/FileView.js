@@ -69,6 +69,7 @@ export default {
             const authStore = useAuthStore();
             return authStore.access_level >= ACCESS_LEVEL_USER;
         },
+
         havePermissionCreateDirectory() {
             return canEdit(this.currentDirectoryOwnerId);
         },
@@ -86,7 +87,8 @@ export default {
                 {},
                 {
                     name: 'Delete',
-                    icon: 'fa-trash'
+                    icon: 'fa-trash',
+                    critical: true
                 }
             ];
 
@@ -103,11 +105,29 @@ export default {
             return menu;
         },
 
+        contextMenuBackgroundItems() {
+            const menu = [];
+
+            if (this.havePermissionCreateDirectory) {
+                menu.push({
+                    name: 'Create directory',
+                    icon: 'fa-folder'
+                });
+            }
+
+            menu.push({
+                name: 'Refresh',
+                icon: 'fa-refresh'
+            })
+
+            return menu;
+        },
+
         contextMenuFileItems() {
             const menu = [
                 {
-                    name: 'Open',
-                    icon: 'fa-file',
+                    name: 'Download',
+                    icon: 'fa-cloud-download',
                     id: 0,
                 },
                 {},
@@ -223,7 +243,6 @@ export default {
             }
         },
 
-
         sortByNamedProperty(name) {
             if (!this.reverseSort) {
                 this.files.data.directories.sort((a, b) => a[name].localeCompare(b[name]));
@@ -274,7 +293,6 @@ export default {
         },
 
         async handleDirectoryContextMenuItemClick(item) {
-            let choice;
             switch (item) {
                 case 0:
                     await this.openFolder(this.selectedDirectoryId);
@@ -282,14 +300,34 @@ export default {
                 case 1:
                     await this.makeDirectoryHidden(this.selectedDirectoryId);
                     break;
-                case 2:
-                    choice = await this.$refs.modalDelete.openAsync(
-                        "Really delete directory? Make sure it's the path you want to tread.");
-                    if (choice == 0) {
+                case 3:
+                    let choice = await this.$refs.modalDelete.openAsync("Really delete directory? Make sure it's the path you want to tread.");
+
+                    if (choice == 0)
                         await this.deleteDirectory(this.selectedDirectoryId);
-                    }
+
                     break;
             }
+        },
+
+        async handleBackgroundContextMenuItemClick(item) {
+            switch (item) {
+                case 0:
+                    await this.createDirectory();
+                    break;
+
+                case 1:
+                    await this.getFiles();
+                    break;
+            }
+        },
+
+        async createDirectory() {
+            await this.$refs.createDirModal.open(this.currentTraversal);
+        },
+
+        async uploadFile() {
+
         },
 
         async goToDirectory(desiredIndex) {
@@ -379,14 +417,26 @@ export default {
 
         openDirectoryContextMenu(event, directory_id) {
             this.$refs.contextMenuFile.hideContextMenu();
+            this.$refs.contextMenuBackground.hideContextMenu();
+
             this.selectedDirectoryId = directory_id;
             this.$refs.contextMenuDirectory.openAtMouse(event);
         },
 
         openFileContextMenu(event, file_id) {
             this.$refs.contextMenuDirectory.hideContextMenu();
+            this.$refs.contextMenuBackground.hideContextMenu();
+
             this.selectedFileId = file_id;
             this.$refs.contextMenuFile.openAtMouse(event);
+        },
+
+        openBackgroundContextMenu(event) {
+            this.$refs.contextMenuFile.hideContextMenu();
+            this.$refs.contextMenuDirectory.hideContextMenu();
+
+            this.$refs.contextMenuBackground.openAtMouse(event);
+
         },
 
         async openFileInfo(file_id) {

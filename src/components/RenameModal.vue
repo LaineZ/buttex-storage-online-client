@@ -4,6 +4,7 @@
             <div style="margin-right: 20px">
                 <i class="fa fa-file-o fa-4x"></i>
             </div>
+            
             <div>
                 <h3>Rename</h3>
                 <input type="text" v-model="newName" placeholder="New file name">

@@ -80,9 +80,9 @@ export default {
     margin: 0;
     padding: 0;
     
-    background-color: var(--bg5);
+    background-color: var(--bg6);
     
-    border: 1px solid var(--bg3);
+    border: 1px solid var(--bg4);
     border-radius: 5px;
     
     cursor: pointer;
@@ -106,15 +106,17 @@ export default {
     width: 30px;
     text-align: center;
     color: inherit;
+    opacity: 0.5;
 }
 
 .context-menu hr {
-    margin: 4px 0 4px 0;
-    padding: 0;
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid var(--bg3);
     
-    color: var(--bg2);
-    background-color: var(--bg2);
-    border: 1px solid var(--bg2);
+    margin: 0;
+    padding: 0;
 }
 
 .modal-fade-enter-active,

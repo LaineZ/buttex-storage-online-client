@@ -1,6 +1,7 @@
 <template>
     <div class="profile">
         <LoadingOverlay :loading="loading" :dimming="true"/>
+        
         <div class="info">
             <div style="margin-right: 10px">
                 <img width="96" :src="avatarUrl" @error="fallbackImg">
@@ -10,6 +11,7 @@
                 <small>{{ name }}</small>
             </div>
         </div>
+        
         <div>
             <h2>System settings</h2>
             <label>Window width {{ mobility ? 100 : width }}%</label>
@@ -194,7 +196,7 @@ input[type="range"] {
     display: block;
     width: 100%;
     -webkit-appearance: none;
-    background: var(--bg3);
+    background: var(--bg4);
     color: var(--fg);
     height: 16px;
 }
@@ -225,7 +227,7 @@ input[type="range"]::-moz-range-thumb {
 
 .info {
     display: flex;
-    background-color: var(--bg3);
+    background-color: var(--bg4);
     padding: 5px;
 }
 </style>
