@@ -161,6 +161,7 @@
 
 .controls button:hover {
     background-color: var(--fg3);
+    cursor: pointer;
 }
 
 .tiles {
