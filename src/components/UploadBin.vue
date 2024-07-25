@@ -211,7 +211,7 @@ export default {
     position: fixed;
     right: 0;
     bottom: 0;
-    background-color: var(--bg2);
+    background-color: var(--bg3);
     width: 25vw;
     min-width: 200px;
     max-height: 100vh;
@@ -219,7 +219,7 @@ export default {
 
 .header {
     padding: 10px;
-    background-color: var(--bg3);
+    background-color: var(--bg9);
 }
 
 .content {

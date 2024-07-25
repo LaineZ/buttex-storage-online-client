@@ -117,7 +117,7 @@ export default {
 }
 
 .modal-bottom {
-    background-color: var(--bg2);
+    background-color: var(--bg3);
     padding: 10px;
 }
 

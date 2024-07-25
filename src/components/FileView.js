@@ -83,6 +83,7 @@ export default {
                     name: 'Make hidden',
                     icon: 'fa-eye'
                 },
+                {},
                 {
                     name: 'Delete',
                     icon: 'fa-trash'
@@ -105,15 +106,11 @@ export default {
         contextMenuFileItems() {
             const menu = [
                 {
-                    name: 'Open file',
+                    name: 'Open',
                     icon: 'fa-file',
                     id: 0,
                 },
-                {
-                    name: 'Delete',
-                    icon: 'fa-trash',
-                    id: 1,
-                },
+                {},
                 {
                     name: 'Rename',
                     icon: 'fa-i-cursor',
@@ -135,7 +132,6 @@ export default {
                 menu.splice(1, 2);
             }
 
-
             const file = this.getFileInfoById(this.selectedFileId);
             const authStore = useAuthStore();
 
@@ -146,6 +142,15 @@ export default {
                     id: 5
                 })
             }
+
+            menu.push({})
+
+            menu.push({
+                name: 'Delete',
+                icon: 'fa-trash',
+                critical: true,
+                id: 1,
+            })
 
             return menu;
         }

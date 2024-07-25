@@ -194,7 +194,7 @@ input[type="range"] {
     display: block;
     width: 100%;
     -webkit-appearance: none;
-    background: var(--bg2);
+    background: var(--bg3);
     color: var(--fg);
     height: 16px;
 }
@@ -225,7 +225,7 @@ input[type="range"]::-moz-range-thumb {
 
 .info {
     display: flex;
-    background-color: var(--bg2);
+    background-color: var(--bg3);
     padding: 5px;
 }
 </style>
