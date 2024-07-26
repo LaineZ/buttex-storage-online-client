@@ -9,7 +9,7 @@
                 <i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i>
             </button>
             
-            <button v-if="havePermission" title="Upload" class="upload-btn">
+            <button v-if="havePermission" title="Upload" class="upload-button">
                 <i class="fa fa-upload"></i>
                 <input type="file" name="file" @change="fileDropButton" multiple>
             </button>
@@ -42,7 +42,10 @@
             <user-button style="margin-left: auto; margin-right: 20px;"></user-button>
         </div>
         
-        <div class="view">
+        <div
+            class="view"
+            @contextmenu.self="openBackgroundContextMenu($event)"
+        >
             <LoadingOverlay :loading="loading" :dimming="true"/>
             
             <template v-if="haveFiles">
@@ -59,7 +62,7 @@
                     <tr v-for="folder in files.data.directories"
                         @contextmenu.prevent="openDirectoryContextMenu($event, folder.id)" @click="openFolder(folder.id)">
                         <td>
-                            <i class="fa fa-folder-o" aria-hidden="true"></i> {{ folder.name }}
+                            <i class="fa fa-folder-o table-icon-directory" aria-hidden="true"></i> {{ folder.name }}
                         </td>
                         
                         <td class="not-show-on-phone">
@@ -82,7 +85,7 @@
                     <tr v-for="file in files.data.files" @contextmenu.prevent="openFileContextMenu($event, file.id)"
                         @click="openFileInfo(file.id)">
                         <td>
-                            <i class="fa" :class="mapIcon(file.type)" aria-hidden="true"></i> {{ file.name }}
+                            <i class="fa table-icon-file" :class="mapIcon(file.type)" aria-hidden="true"></i> {{ file.name }}
                         </td>
                         <td class="not-show-on-phone">
                             {{ file.user_nickname }}
@@ -102,7 +105,6 @@
                 <div
                     v-if="view == 1"
                     class="tiles"
-                    @contextmenu.self="openBackgroundContextMenu($event)"
                 >
                     <div class="tiles-items">
                         <FileViewTile
@@ -126,11 +128,9 @@
                 v-else-if="!haveFiles && !this.startLoading"
                 class="directory-empty"
             >
-                <p>
-                    <img alt="empty folder" width="64" src="../assets/folder.svg">
-                    <br>
-                    This directory are emptier than a ghost town
-                </p>
+                <img alt="empty folder" width="64" src="../assets/folder.svg">
+                <br>
+                This directory are emptier than a ghost town
             </div>
         </div>
     </div>
@@ -171,8 +171,6 @@
     
     display: flex;
     flex-direction: column;
-    place-items: center;
-    justify-content: center;
 }
 
 .view ul {
@@ -197,7 +195,21 @@
 }
 
 .controls button:hover {
-    background-color: var(--fg3);
+    background-color: var(--bg7);
+}
+
+.upload-button {
+    overflow: hidden;
+    position: relative;
+}
+
+.upload-button input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
     cursor: pointer;
 }
 
@@ -214,22 +226,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-}
-
-.upload-btn {
-    width: 32px;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-}
-
-.upload-btn input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
 }
 
 .directory-traversal {
@@ -280,11 +276,30 @@ p {
 
 table {
     width: 100%;
-    height: 100%;
 }
 
 table tr:hover {
     background-color: var(--bg5);
+}
+
+.directory-empty {
+    width: 100%;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    justify-content: center;
+    
+    pointer-events: none;
+}
+
+.table-icon-file {
+    color: var(--file);
+}
+
+.table-icon-directory {
+    color: var(--directory);
 }
 
 @media (max-width: 600px) {
