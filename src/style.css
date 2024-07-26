@@ -93,7 +93,6 @@ table tr:nth-child(odd) {
 table {
     text-align: left;
     border: none;
-    border-collapse: collapse;
     line-height: 1.2;
     table-layout: fixed;
 }
@@ -120,6 +119,7 @@ input[type="text"], input[type="password"] {
 button {
     border-radius: 3px;
     cursor: pointer;
+    font-family: "Inter", sans-serif;
 }
 
 button:hover {

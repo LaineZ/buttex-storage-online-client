@@ -101,6 +101,7 @@ export default {
             if (!canEdit(this.currentDirectoryOwnerId)) {
                 menu.pop();
                 menu.pop();
+                menu.pop();
             }
             return menu;
         },
@@ -148,10 +149,6 @@ export default {
                 }
             ];
 
-            if (!canEdit(this.currentDirectoryOwnerId)) {
-                menu.splice(1, 2);
-            }
-
             const file = this.getFileInfoById(this.selectedFileId);
             const authStore = useAuthStore();
 
@@ -170,7 +167,13 @@ export default {
                 icon: 'fa-trash',
                 critical: true,
                 id: 1,
-            })
+            });
+
+
+            if (!canEdit(this.currentDirectoryOwnerId)) {
+                menu.splice(1, 2);
+                menu.splice(menu.length - 2, 2);
+            }
 
             return menu;
         }
