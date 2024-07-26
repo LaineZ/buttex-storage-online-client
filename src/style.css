@@ -25,6 +25,9 @@
     --fg6: #65656e;
 
     --fg-critical: #ff6375;
+
+    --directory: #f0d77e;
+    --file: var(--fg4);
 }
 
 body {

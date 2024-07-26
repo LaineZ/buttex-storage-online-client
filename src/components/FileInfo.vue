@@ -3,7 +3,7 @@
         <LoadingOverlay :loading="loading" :dimming="false"/>
         
         <div class="main">
-            <div class="icon" v-if="info">
+            <div class="table-icon-file" v-if="info">
                 <img width="90" v-if="info.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + info.id">
                 
                 <i v-else class="fa fa-4x" :class="mapIcon(info.type)" style="display: block;"></i>
@@ -164,7 +164,7 @@ export default {
     position: relative;
 }
 
-.icon {
+.table-icon-file {
     display: flex;
     flex-direction: column;
     place-items: center;
