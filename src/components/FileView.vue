@@ -1,50 +1,49 @@
 <template>
     <div class="controls-and-view">
-        <div class="controls">
-            <button @click="goBack" title="Go up" :disabled="currentTraversal == 0 || loading"><i
+        <div class="controls-wrapper">
+            <div class="controls" :style="{ width: this.width + '%'}">
+                <button @click="goBack" title="Go up" :disabled="currentTraversal == 0 || loading"><i
                     class="fa fa-arrow-left"></i></button>
-            <button @click="getFiles" title="Refresh listing" :disabled="startLoading"><i :class="startLoading ? 'fa-spin' : ''" class="fa fa-refresh"></i></button>
-            
-            <button @click="switchView" title="Switch view">
-                <i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i>
-            </button>
-            
-            <button v-if="havePermission" title="Upload" class="upload-button">
-                <i class="fa fa-upload"></i>
-                <input type="file" name="file" @change="fileDropButton" multiple>
-            </button>
-            
-            <button v-if="havePermissionCreateDirectory" @click="createDirectory"
-                    title="Create directory">
-                <i class="fa fa-folder"></i>
-            </button>
-            
-            <button @click="this.openDocumentationPage()" title="Documentation">
-                <i class="fa fa-book"></i>
-            </button>
-            
-            <div class="path">
-                <div
-                    v-for="(directory, index) in directories"
-                    class="directory-traversal"
-                >
-                    <p @click="goToDirectory(index)">
-                        {{ directory }}
-                        
-                        <i
-                            v-if="directories.length > 1 && index != directories.length - 1"
-                            class="fa fa-caret-right"
-                        />
-                    </p>
+                <button @click="getFiles" title="Refresh listing" :disabled="startLoading"><i :class="startLoading ? 'fa-spin' : ''" class="fa fa-refresh"></i></button>
+
+                <button @click="switchView" title="Switch view">
+                    <i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i>
+                </button>
+
+                <button v-if="havePermission" title="Upload" class="upload-button">
+                    <i class="fa fa-upload"></i>
+                    <input type="file" name="file" @change="fileDropButton" multiple>
+                </button>
+
+                <button v-if="havePermissionCreateDirectory" @click="createDirectory"
+                        title="Create directory">
+                    <i class="fa fa-folder"></i>
+                </button>
+
+                <div class="path">
+                    <div
+                        v-for="(directory, index) in directories"
+                        class="directory-traversal"
+                    >
+                        <p @click="goToDirectory(index)">
+                            {{ directory }}
+
+                            <i
+                                v-if="directories.length > 1 && index != directories.length - 1"
+                                class="fa fa-caret-right"
+                            />
+                        </p>
+                    </div>
                 </div>
+
+                <user-button style="margin-left: auto; margin-right: 20px;"></user-button>
             </div>
-            
-            <user-button style="margin-left: auto; margin-right: 20px;"></user-button>
         </div>
         
         <div
             class="view"
             @contextmenu.self="openBackgroundContextMenu($event)"
+            :style="{ width: this.width + '%'}"
         >
             <LoadingOverlay :loading="loading" :dimming="true"/>
             
@@ -162,26 +161,29 @@
 }
 
 .view {
-    width: 100%;
-    
     flex-grow: 1;
-    
     overflow-x: hidden;
     overflow-y: auto;
-    
     display: flex;
     flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .view ul {
     cursor: pointer;
 }
 
-.controls {
-    width: 100%;
+.controls-wrapper {
     height: 40px;
-    
+    width: 100%;
     background-color: var(--bg4);
+}
+
+.controls {
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
     display: flex;
     place-items: center;
     top: 0;
@@ -275,6 +277,10 @@ p {
 
 table {
     width: 100%;
+}
+
+table tr {
+    user-select: none;
 }
 
 table tr:hover {

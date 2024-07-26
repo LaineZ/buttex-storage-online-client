@@ -40,6 +40,6 @@ export default {
             overflow: hidden;
         "
     >
-        <file-view :style="{ width: width + '%' }"/>
+        <file-view :width="width" />
     </main>
 </template>

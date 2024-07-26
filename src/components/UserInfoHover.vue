@@ -18,6 +18,7 @@
                 </div>
                 <div class="bottom">
                     <button @click="openProfile"><i class="fa fa-user"></i> Profile</button>
+                    <button @click="this.openDocumentationPage()"><i class="fa fa-book"></i> Documentation</button>
                     <button class="logout-button" @click="logout"><i class="fa fa-power-off"></i> Logout</button>
                 </div>
             </div>
@@ -33,7 +34,7 @@
 <script>
 import {useAuthStore} from "../store/auth.js";
 import {ref, watchEffect} from "vue";
-import {ACCESS_LEVEL_ADMIN, ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER} from "../helpers/consts.js";
+import {ACCESS_LEVEL_ADMIN, ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER, ENDPOINT} from "../helpers/consts.js";
 import {RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
 import ChangeAvatarModal from "./ChangeAvatarModal.vue";
@@ -151,6 +152,10 @@ export default {
             this.$refs.modalAvatarUrl.open(this.avatarUrl);
         },
 
+        openDocumentationPage() {
+            window.open(ENDPOINT + "/api/docs", "_blank").focus();
+        },
+
         close() {
             this.show = false;
         }
@@ -181,6 +186,7 @@ export default {
 
 .main button {
     width: 100%;
+    margin-top: 5px;
 }
 
 .container {
@@ -190,7 +196,6 @@ export default {
 
 .logout-button {
     background-color: #755555;
-    margin-top: 5px;
 }
 
 .logout-button:hover {

@@ -60,6 +60,12 @@ export default {
             window.location.hash = newValue;
         }
     },
+    props: {
+        width: {
+            type: Number,
+            value: 100,
+        }
+    },
     computed: {
         haveFiles() {
             return this.files &&
@@ -458,10 +464,6 @@ export default {
         fileDropButton(event) {
             const files = event.target.files;
             this.$refs.uploadBin.pushFiles(files);
-        },
-
-        openDocumentationPage() {
-            window.open(ENDPOINT + "/api/docs", "_blank").focus();
         },
 
         switchView() {
