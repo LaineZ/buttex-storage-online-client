@@ -227,7 +227,7 @@ export default {
             const info = this.getFileInfoById(this.selectedFileId);
             switch (item) {
                 case 0:
-                    window.location.href = ENDPOINT + "/data/" + info.name;
+                    window.location.href = ENDPOINT + "/data/" + info.name + "?download=1";
                     break;
                 case 1:
                     const choice = await this.$refs.modalDelete.openAsync(
