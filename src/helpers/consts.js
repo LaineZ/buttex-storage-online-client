@@ -15,6 +15,12 @@ export const SORT_UPLOAD_DATE = 3;
 export const SORT_LAST_MODIFIED = 4;
 export const SORT_SIZE = 5;
 
+export const NO_PREVIEW = 0;
+export const PREVIEW_IMAGE = 1;
+export const PREVIEW_AUDIO = 2;
+export const PREVIEW_VIDEO = 3;
+export const PREVIEW_TEXT = 4;
+
 export const EXTENSION_MAPPING_ICONS = {
     "image/": "fa-file-picture-o",
     "video/": "fa-file-video-o",

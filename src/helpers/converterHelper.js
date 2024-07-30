@@ -1,4 +1,11 @@
-import {EXTENSION_MAPPING_ICONS} from "./consts.js";
+import {
+    EXTENSION_MAPPING_ICONS,
+    NO_PREVIEW,
+    PREVIEW_AUDIO,
+    PREVIEW_IMAGE,
+    PREVIEW_TEXT,
+    PREVIEW_VIDEO
+} from "./consts.js";
 
 export function formatBytes(bytes, decimals = 2) {
     if (!+bytes) return '0 Bytes'
@@ -19,8 +26,6 @@ export function fmtDate(timestamp) {
 }
 
 export function mapIcon(mime) {
-
-
     for (const key in EXTENSION_MAPPING_ICONS) {
         if (mime.startsWith(key)) {
             return EXTENSION_MAPPING_ICONS[key];
@@ -28,4 +33,25 @@ export function mapIcon(mime) {
     }
 
     return "fa-file-o";
+}
+
+
+export function canShowPreview(mime) {
+    if (mime.startsWith('image/')) {
+        return PREVIEW_IMAGE;
+    }
+
+    if (mime.startsWith('video/')) {
+        return PREVIEW_VIDEO;
+    }
+
+    if (mime.startsWith('audio/')) {
+        return PREVIEW_AUDIO;
+    }
+
+    if (mime.startsWith('text/') || mime.startsWith('application/javascript')) {
+        return PREVIEW_TEXT;
+    }
+
+    return NO_PREVIEW;
 }

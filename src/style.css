@@ -80,6 +80,12 @@ table tr {
     cursor: pointer;
 }
 
+pre {
+    white-space: pre;
+    text-wrap: wrap;
+    width: 100%;
+}
+
 table tr i {
     color: var(--fg2);
     margin-right: 5px;

@@ -7,21 +7,21 @@
                         <i style="vertical-align: top;" class="fa fa-remove"></i>
                     </button>
                 </div>
-                
+
                 <div style="padding: 20px">
                     <div v-if="text.length === 0">
                         <slot></slot>
                     </div>
-                    
+
                     <div v-else style="display: flex; min-width: 15vw;">
                         <div style="margin-right: 20px">
                             <i class="fa fa-4x" :class="icon"></i>
                         </div>
-                        
+
                         <p>{{ text }}</p>
                     </div>
                 </div>
-                
+
                 <div
                     v-if="buttons.length > 0"
                     class="modal-bottom"
@@ -121,12 +121,12 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    
+
     background: rgba(83, 83, 115, 0.6);
     backdrop-filter: blur(5px);
-    
+
     z-index: 1000;
-    
+
     display: flex;
     place-items: center;
     transition: opacity 0.2s ease-in-out;
@@ -134,10 +134,10 @@ export default {
 
 .modal-bottom {
     padding: 10px;
-    
     display: flex;
     gap: 10px;
-    
+    position: sticky;
+    bottom: 0;
     background-color: var(--bg3);
 }
 
@@ -148,24 +148,24 @@ export default {
 .modal-content {
     max-width: 95vw;
     max-height: 100vh;
-    
+
     margin: 20px auto;
-    
+
     border-radius: 5px;
-    
+
     background-color: var(--bg);
     box-shadow: 0 0 30px rgba(14, 14, 18, 0.7);
-    
+
     overflow-y: auto;
 }
 
 .close-button {
     width: 18px;
     height: 18px;
-    
+
     background-color: transparent;
     padding: 2px;
-    
+
     text-align: center;
     margin: 4px 4px 4px auto;
 }
@@ -182,11 +182,13 @@ export default {
 
 .modal-fade-enter-active,
 .modal-fade-leave-active {
-    transition: opacity 0.2s ease;
+    transition: all 0.2s ease;
+    transform: scale(1.0, 1.0);
 }
 
 .modal-fade-enter-from,
 .modal-fade-leave-to {
     opacity: 0;
+    transform: scale(1.0, 0.97);
 }
 </style>

@@ -15,14 +15,16 @@ import UploadBin from "./UploadBin.vue";
 import CreateDirectoryModal from "./CreateDirectoryModal.vue";
 import ContextMenu from "./ContextMenu.vue";
 import RenameModal from "./RenameModal.vue";
-import {fmtDate, formatBytes} from "../helpers/converterHelper.js";
+import {canShowPreview, fmtDate, formatBytes} from "../helpers/converterHelper.js";
 import * as Api from "../helpers/api.js";
 import {setUserAvatar} from "../helpers/api.js";
 import FileViewTile from "./FileViewTile.vue";
+import FilePreview from "./FilePreview.vue";
 
 export default {
     name: "FileView",
     components: {
+        FilePreview,
         FileViewTile,
         RenameModal,
         ContextMenu,
@@ -446,6 +448,23 @@ export default {
 
             this.$refs.contextMenuBackground.openAtMouse(event);
 
+        },
+
+
+        handleOpenUrl(response) {
+            if (response == 0) {
+                window.open(ENDPOINT + "/data/" + this.getFileInfoById(this.selectedFileId).url).focus();
+            }
+        },
+
+        async openFilePreview(file_id) {
+            const file = this.getFileInfoById(file_id);
+            if (canShowPreview(file.type) != 0) {
+                this.selectedFileId = file_id;
+                this.$refs.modalFilePreview.open();
+            } else {
+                await this.openFileInfo(file_id);
+            }
         },
 
         async openFileInfo(file_id) {

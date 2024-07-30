@@ -3,6 +3,8 @@ import './style.css'
 import App from './App.vue'
 import { pinia } from './store/pinia';
 import Modal from './components/Modal.vue';
+import Vue3HighlightEs from "vue3-highlightjs";
+import 'highlight.js/styles/gruvbox-dark.css';
 
 const ModalApp = {};
 
@@ -20,5 +22,6 @@ ModalApp.install = (app) => {
 
 createApp(App)
     .use(pinia)
+    .use(Vue3HighlightEs)
     .use(ModalApp)
     .mount('#app')

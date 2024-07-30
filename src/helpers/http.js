@@ -1,8 +1,16 @@
 import {ACCESS_LEVEL_MODERATOR, ENDPOINT} from "./consts.js";
 import {useAuthStore} from "../store/auth.js";
 
+
+export async function RequestGETText(path) {
+    const response = await fetch(path);
+    const text = await response.text();
+    return text;
+}
+
 export async function RequestGET(path, getOptions = null) {
     let response;
+
 
     const init = {
         method: "GET",

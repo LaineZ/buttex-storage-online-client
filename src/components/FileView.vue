@@ -116,7 +116,7 @@
                         <FileViewTile
                             v-for="file in files.data.files"
                             :entry="file"
-                            @click="openFileInfo(file.id)"
+                            @click="openFilePreview(file.id)"
                             @contextmenu="openFileContextMenu($event, file.id)"
                         />
                     </div>
@@ -136,6 +136,10 @@
     
     <modal ref="modalFileInfo" :buttons="[]">
         <file-info ref="fileInfo" @save="fileEditDialogResponse"></file-info>
+    </modal>
+
+    <modal ref="modalFilePreview" :buttons="['Open Original', 'Close']" @response="this.handleOpenUrl">
+        <file-preview :file-id="this.selectedFileId" :file-type="getFileInfoById(this.selectedFileId).type"></file-preview>
     </modal>
     
     <modal ref="modalDelete" :buttons="['Yes', 'No']"></modal>
