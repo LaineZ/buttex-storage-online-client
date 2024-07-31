@@ -229,7 +229,7 @@ export default {
             const info = this.getFileInfoById(this.selectedFileId);
             switch (item) {
                 case 0:
-                    window.location.href = ENDPOINT + "/data/" + info.name + "?download=1";
+                    window.location.href = ENDPOINT + "/permanent/" + info.id + "?download=1";
                     break;
                 case 1:
                     const choice = await this.$refs.modalDelete.openAsync(
@@ -357,7 +357,7 @@ export default {
             try {
                 let loadingTimeout = setTimeout(() => {
                     this.loading = true;
-                }, 200);
+                }, 300);
                 let request = {};
 
                 if (this.currentTraversal > 0) {

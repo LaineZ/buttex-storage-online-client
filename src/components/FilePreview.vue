@@ -2,13 +2,11 @@
 import {ENDPOINT, PREVIEW_AUDIO, PREVIEW_IMAGE, PREVIEW_TEXT, PREVIEW_VIDEO} from "../helpers/consts.js";
 import {RequestGETText} from "../helpers/http.js";
 import {canShowPreview} from "../helpers/converterHelper.js";
-import SshPre from 'simple-syntax-highlighter'
-import 'simple-syntax-highlighter/dist/sshpre.css'
 import LoadingOverlay from "./LoadingOverlay.vue";
 
 export default {
     name: "FilePreview",
-    components: {LoadingOverlay, SshPre },
+    components: {LoadingOverlay },
     methods: {
         PREVIEW_TEXT() {
             return PREVIEW_TEXT
