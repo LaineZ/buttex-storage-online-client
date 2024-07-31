@@ -9,7 +9,7 @@
                 <i v-else class="fa fa-4x" :class="mapIcon(info.type)" style="display: block;"></i>
                 
                 <div class="preview">
-                    <h4>File</h4>
+                    <h4 style="text-align: center;">{{ info.type }}</h4>
                 </div>
             </div>
             

@@ -49,7 +49,7 @@ export function canShowPreview(mime) {
         return PREVIEW_AUDIO;
     }
 
-    if (mime.startsWith('text/') || mime.startsWith('application/javascript')) {
+    if (mime.startsWith('text/') || mime.startsWith('application/javascript') || mime.startsWith('application/json')) {
         return PREVIEW_TEXT;
     }
 

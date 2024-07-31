@@ -60,7 +60,7 @@
                     
                     <tr v-for="folder in files.data.directories"
                         @contextmenu.prevent="openDirectoryContextMenu($event, folder.id)" @click="openFolder(folder.id)">
-                        <td>
+                        <td :class="folder.hidden ? 'hidden' : ''">
                             <i class="fa fa-folder-o table-icon-directory" aria-hidden="true"></i> {{ folder.name }}
                         </td>
                         
@@ -83,7 +83,7 @@
                     
                     <tr v-for="file in files.data.files" @contextmenu.prevent="openFileContextMenu($event, file.id)"
                         @click="openFileInfo(file.id)">
-                        <td>
+                        <td :class="file.hidden ? 'hidden' : ''">
                             <i class="fa table-icon-file" :class="mapIcon(file.type)" aria-hidden="true"></i> {{ file.name }}
                         </td>
                         <td class="not-show-on-phone">
@@ -139,7 +139,7 @@
     </modal>
 
     <modal ref="modalFilePreview" :buttons="['Open Original', 'Close']" @response="this.handleOpenUrl">
-        <file-preview :file-id="this.selectedFileId" :file-type="getFileInfoById(this.selectedFileId).type"></file-preview>
+        <file-preview :file-id="this.selectedFileId" :size="getFileInfoById(this.selectedFileId).size" :file-type="getFileInfoById(this.selectedFileId).type"></file-preview>
     </modal>
     
     <modal ref="modalDelete" :buttons="['Yes', 'No']"></modal>

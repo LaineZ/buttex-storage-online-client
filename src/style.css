@@ -184,6 +184,10 @@ select {
     display: block;
 }
 
+.hidden {
+    color: var(--fg4) !important;
+}
+
 @media (max-width: 700px) {
     .not-show-on-phone {
         display: none;

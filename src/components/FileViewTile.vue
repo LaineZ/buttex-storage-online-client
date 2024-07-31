@@ -22,12 +22,13 @@ export default {
 </script>
 
 <template>
-    <div class="tile" v-if="isDirectory" v-bind="$attrs">
+    <div class="tile" :class="entry.hidden ? 'hidden' : ''" v-if="isDirectory" v-bind="$attrs">
         <i class="fa fa-folder-o fa-3x table-icon-directory" aria-hidden="true"></i> {{ entry.name }}
     </div>
     
     <div class="tile" v-else v-bind="$attrs">
         <div
+            :class="entry.hidden ? 'hidden' : ''"
             v-if="entry.has_preview"
             class="tile-image"
             :style="{

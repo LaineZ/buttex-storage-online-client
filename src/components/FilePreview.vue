@@ -28,11 +28,16 @@ export default {
         },
     },
     async mounted() {
-        this.loading = true;
-        if (this.fileType.startsWith("text/")) {
-            this.content = await RequestGETText(this.source);
+        try {
+            this.loading = true;
+            if (this.fileType.startsWith("text/")) {
+                this.content = await RequestGETText(this.source);
+            }
+        } catch (error) {
+            this.$show('Error loading file preview: ' + error.message);
+        } finally {
+            this.loading = false;
         }
-        this.loading = false;
     },
     computed: {
         source() {
@@ -48,17 +53,21 @@ export default {
     props: {
         fileType: String,
         fileId: Number,
+        size: Number
     }
 }
 </script>
 
 <template>
-    <div class="wrapper">
-        <LoadingOverlay :loading="loading" :dimming="false"/>
-        <pre v-if="canShowPreview(fileType) == PREVIEW_TEXT()" v-highlightjs="content"><code>{{ content }}</code></pre>
+    <div class="wrapper" v-if="canShowPreview(fileType) != PREVIEW_TEXT()">
         <img class="preview" v-if="canShowPreview(fileType) == PREVIEW_IMAGE()" :src="source">
         <video class="preview" v-if="canShowPreview(fileType) == PREVIEW_VIDEO()" :src="source" controls></video>
         <audio class="preview" v-if="canShowPreview(fileType) == PREVIEW_AUDIO()" style="width: 50vw" :src="source" controls></audio>
+    </div>
+    <div class="wrapper" v-else>
+        <LoadingOverlay :loading="loading" :dimming="false"/>
+        <pre v-if="this.content && size < 2 * 1024 * 1024" v-highlightjs="content"><code>{{ content }}</code></pre>
+        <pre v-else>{{ content }}</pre>
     </div>
 </template>
 

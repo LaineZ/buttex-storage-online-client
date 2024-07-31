@@ -38,15 +38,13 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        
+        pointer-events: none;
         text-align: center;
-        
         display: flex;
         flex-direction: column;
         place-items: center;
         justify-content: center;
         gap: 15px;
-        
         z-index: 999;
     }
 
