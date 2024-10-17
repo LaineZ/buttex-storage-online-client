@@ -450,10 +450,9 @@ export default {
 
         },
 
-
         handleOpenUrl(response) {
             if (response == 0) {
-                window.open(ENDPOINT + "/data/" + this.getFileInfoById(this.selectedFileId).url).focus();
+                window.open(this.getFileInfoById(this.selectedFileId).url).focus();
             }
         },
 
