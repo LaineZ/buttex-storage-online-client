@@ -25,3 +25,6 @@ dist-ssr
 
 # Scripts
 deploy.ps1
+
+# Pidor
+.vscode/
