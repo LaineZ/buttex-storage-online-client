@@ -82,7 +82,7 @@
                     </tr>
                     
                     <tr v-for="file in files.data.files" @contextmenu.prevent="openFileContextMenu($event, file.id)"
-                        @click="openFileInfo(file.id)">
+                        @click="openFilePreview(file.id)">
                         <td :class="file.hidden ? 'hidden' : ''">
                             <i class="fa table-icon-file" :class="mapIcon(file.type)" aria-hidden="true"></i> {{ file.name }}
                         </td>

@@ -59,7 +59,7 @@ export default {
     },
     watch: {
         currentTraversal: function(newValue, _) {
-            window.location.hash = newValue;
+            window.location.hash = isNaN(newValue) ? 0 : newValue;
         }
     },
     props: {
