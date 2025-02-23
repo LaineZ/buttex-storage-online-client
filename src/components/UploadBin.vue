@@ -37,7 +37,20 @@ export default {
             default: 0,
         }
     },
+    mounted() {
+        window.addEventListener("paste", this.handlePaste);
+    },
     methods: {
+        handlePaste(event) {
+            const items = event.clipboardData.items;
+            for (const item of items) {
+                if (item.kind == 'file') {
+                    const file = item.getAsFile();
+                    this.pushFiles([file]);
+                }
+            }
+        },
+
         pushFiles(files, fromDrag = false) {
             console.log(files);
 
