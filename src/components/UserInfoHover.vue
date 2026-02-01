@@ -181,7 +181,7 @@ export default {
     z-index: 9999999;
     background-color: rgba(26, 26, 36, 0.9);
     backdrop-filter: blur(4px);
-    box-shadow: 0 0 30px rgba(14, 14, 18, 0.7);
+    box-shadow: 0 0 10px rgba(14, 14, 18, 0.7);
 }
 
 .main button {

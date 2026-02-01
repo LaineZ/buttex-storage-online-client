@@ -154,7 +154,7 @@ export default {
     border-radius: 5px;
 
     background-color: var(--bg);
-    box-shadow: 0 0 30px rgba(14, 14, 18, 0.7);
+    box-shadow: 0 0 10px rgba(14, 14, 18, 0.7);
 
     overflow-y: auto;
 }

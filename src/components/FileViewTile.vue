@@ -101,7 +101,7 @@ export default {
     background-color: var(--bg4);
     border-color: var(--bg5);
     
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 }
 
 .tile:active {
