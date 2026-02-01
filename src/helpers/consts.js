@@ -1,4 +1,6 @@
-export const ENDPOINT = "https://storage.buttex.ru";
+console.log(import.meta.env);
+
+export const ENDPOINT = import.meta.env.VITE_ENDPOINT;
 export const ACCESS_LEVEL_ANY = -1;
 export const ACCESS_LEVEL_USER = 0;
 export const ACCESS_LEVEL_MODERATOR = 1;

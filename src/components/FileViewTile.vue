@@ -1,5 +1,6 @@
 <script>
 import {formatBytes, mapIcon} from "../helpers/converterHelper.js";
+import {ENDPOINT} from "../helpers/consts.js";
 
 export default {
     name: "FileViewTile",
@@ -16,6 +17,9 @@ export default {
         isDirectory() {
             // directories does not have size and mime type
             return this.entry.size === undefined && this.entry.type === undefined;
+        },
+        ENDPOINT() {
+            return ENDPOINT;
         }
     },
 }
@@ -32,7 +36,7 @@ export default {
             v-if="entry.has_preview"
             class="tile-image"
             :style="{
-                'background-image': `url('https://storage.buttex.ru/api/storage/get_file_preview?file_id=${entry.id}')`
+                'background-image': `url('${ENDPOINT}/api/storage/get_file_preview?file_id=${entry.id}')`
             }"
         />
        

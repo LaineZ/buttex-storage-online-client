@@ -4,7 +4,7 @@
         
         <div class="main">
             <div class="table-icon-file" v-if="info">
-                <img width="90" v-if="info.has_preview == 1" :src="'https://storage.buttex.ru/api/storage/get_file_preview?file_id=' + info.id">
+                <img width="90" v-if="info.has_preview == 1" :src="ENDPOINT + '/api/storage/get_file_preview?file_id=' + info.id">
                 
                 <i v-else class="fa fa-4x" :class="mapIcon(info.type)" style="display: block;"></i>
                 
@@ -69,6 +69,7 @@ import {RequestGET} from "../helpers/http.js";
 import { formatBytes, fmtDate, mapIcon } from "../helpers/converterHelper.js";
 import { canEdit } from "../helpers/http.js";
 import * as Api from "../helpers/api.js";
+import {ENDPOINT} from "../helpers/consts.js";
 
 export default {
     name: "FileInfo",
@@ -83,8 +84,10 @@ export default {
     },
     computed: {
         isAltered() {
-            console.log(this.originalInformation.name, this.info.name);
             return this.originalInformation.name != this.info.name || this.originalInformation.hidden !== this.info.hidden;
+        },
+        ENDPOINT() {
+            return ENDPOINT;
         }
     },
     emits: ["save"],
