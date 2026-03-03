@@ -18,7 +18,7 @@
                 </div>
                 <div class="bottom">
                     <button @click="openProfile"><i class="fa fa-user"></i> Profile</button>
-                    <button @click="this.openDocumentationPage()"><i class="fa fa-book"></i> Documentation</button>
+                    <a class="button" target="_blank" :href="`${ENDPOINT}/api/docs`"> <i class="fa fa-book"></i> Documentation</a>
                     <button class="logout-button" @click="logout"><i class="fa fa-power-off"></i> Logout</button>
                 </div>
             </div>
@@ -58,6 +58,12 @@ export default {
             width: 100,
             triggerElement: null,
         };
+    },
+
+    computed: {
+      ENDPOINT() {
+        return ENDPOINT;
+      }
     },
 
     mounted() {
@@ -152,10 +158,6 @@ export default {
             this.$refs.modalAvatarUrl.open(this.avatarUrl);
         },
 
-        openDocumentationPage() {
-            window.open(ENDPOINT + "/api/docs", "_blank").focus();
-        },
-
         close() {
             this.show = false;
         }
@@ -184,9 +186,10 @@ export default {
     box-shadow: 0 0 10px rgba(14, 14, 18, 0.7);
 }
 
-.main button {
+.main button, .main .button {
     width: 100%;
-    margin-top: 5px;
+    height: 3em;
+    border-radius: 0;
 }
 
 .container {

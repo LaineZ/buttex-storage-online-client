@@ -88,12 +88,12 @@ export default {
 .tile-summary p {
     text-align: left;
     color: var(--fg);
-    
     margin: 0;
     padding: 0;
-    
-    line-height: 1.28;
-    max-height: 2.5em;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
     overflow: hidden;
 }
 

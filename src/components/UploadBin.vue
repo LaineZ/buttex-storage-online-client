@@ -63,6 +63,10 @@ export default {
                     this.files.push({
                         formData: formData,
                         progress: 0,
+                        startTime: Date.now(),
+                        lastTime: Date.now(),
+                        lastLoaded: 0,
+                        speed: 0,
                         total: file.size,
                         error: false,
                         finish: false,
@@ -159,8 +163,22 @@ export default {
 
                     const promise = new Promise((resolve, reject) => {
                         file.xhr.upload.addEventListener('progress', (event) => {
+                            const now = Date.now();
+
                             file.progress = event.loaded;
                             file.total = event.total;
+
+                          const time = (now - file.lastTime) / 1000;
+                          const loaded = event.loaded - file.lastLoaded;
+
+                          if (time > 0) {
+                            file.speed = file.speed
+                              ? file.speed * 0.9 + (loaded / time) * 0.1
+                              : (loaded / time);
+                          }
+
+                          file.lastLoaded = event.loaded;
+                          file.lastTime = now;
                         });
 
                         file.xhr.onreadystatechange = () => {
@@ -200,6 +218,7 @@ export default {
                     file.xhr.send(file.formData);
                 }
             }
+
             this.resolvePromises();
         },
 

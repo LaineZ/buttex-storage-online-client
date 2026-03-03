@@ -33,8 +33,8 @@
                 <input type="password" placeholder="Password" v-model="password">
                 <label>Password confirmation:</label>
                 <input type="password" placeholder="Password confirmation" v-model="confirmPassword">
-                <div style="margin-top: 10px">
-                    <button @click="updateUserData" type="submit" style="margin-right: 10px" :disabled="!isAltered">Save</button>
+                <div class="bottom-controls">
+                    <button @click="updateUserData" type="submit" :disabled="!isAltered">Save</button>
                     <button @click="popluate" :disabled="!isAltered">Revert</button>
                 </div>
             </form>

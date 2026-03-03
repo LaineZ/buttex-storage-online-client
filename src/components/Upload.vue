@@ -2,7 +2,7 @@
     <div class="upload">
         <div style="display: flex">
             <div>
-                <i class="fa fa-file"></i> {{ getFileName }}
+                <i class="fa fa-file"></i> {{ fileName }}
             </div>
             <div style="margin-left: auto; text-align: right;">
                 <a v-if="!file.finish && file.error" class="error"><i class="fa fa-times error"></i> Upload error</a>
@@ -11,9 +11,12 @@
         </div>
         <div>
             <div class="progress-bar">
-                <div class="progress-bar-filled" :style="{ width: `${getPercantage}%` }"></div>
+                <div class="progress-bar-filled" :style="{ width: `${percentage}%` }"></div>
             </div>
-            <small>{{ getPercantage }}% {{ getFormattedBytesProgress }} / {{ getFormattedBytesTotal}}</small>
+            <div class="download-status">
+              <small><i class="fa fa-bars"></i> {{ percentage }}% {{ formattedBytesProgress }} / {{ formattedBytesTotal}}</small>
+              <small><i class="fa fa-bar-chart" aria-hidden="true"></i> {{ formattedSPEEEEEEEEEEEEEEEEEEEEEEEEEEEED }}/s</small>
+            </div>
         </div>
     </div>
 </template>
@@ -29,20 +32,24 @@ export default {
     },
     emits: ["delete"],
     computed: {
-        getPercantage() {
+        percentage() {
             return Math.floor(this.file.progress / this.file.total * 100) || 0;
         },
 
-        getFormattedBytesProgress() {
+        formattedBytesProgress() {
             return formatBytes(this.file.progress)
         },
 
-        getFormattedBytesTotal() {
+        formattedBytesTotal() {
             return formatBytes(this.file.total)
         },
 
-        getFileName() {
-            return this.file.formData.get('file').name
+        formattedSPEEEEEEEEEEEEEEEEEEEEEEEEEEEED() {
+          return formatBytes(this.file.speed);
+        },
+
+        fileName() {
+          return this.file.formData.get('file').name;
         },
     }
 
@@ -60,6 +67,13 @@ export default {
     width: 100%;
     background-color: var(--bg);
     height: 16px;
+}
+
+.download-status {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .progress-bar-filled {

@@ -52,11 +52,11 @@
             </div>
         </div>
         
-        <footer v-if="info && canEdit()">
+        <div class="bottom-controls" v-if="info && canEdit()">
             <button :disabled="loading || !isAltered" @click="saveChanges"><i class="fa fa-check"></i> Save changes</button>
             <button :disabled="loading" @click="retriveFile(fileId)"><i class="fa fa-refresh"></i> Refresh</button>
             <button :disabled="loading" @click="deleteFile"><i class="fa fa-trash"></i> Delete</button>
-        </footer>
+        </div>
         
         <modal ref="modalDelete" :buttons="['Yes', 'No']"></modal>
     </div>
@@ -184,10 +184,6 @@ input {
         max-width: unset;
         width: unset;
     }
-}
-
-footer {
-    margin-top: 10px;
 }
 
 footer button {
