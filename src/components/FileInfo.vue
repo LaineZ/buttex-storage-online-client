@@ -18,7 +18,10 @@
                 <table>
                     <tr>
                         <th>Uploaded by:</th>
-                        <td>{{ info.user_name }}</td>
+                        <td class="file-info-uploaded-by">
+                        	<img :src="info.user_avatar_url"/>
+							<p> {{ info.user_nickname }} </p>
+                        </td>
                     </tr>
                     <tr>
                         <th>Creation date:</th>
@@ -171,7 +174,23 @@ export default {
     display: flex;
     flex-direction: column;
     place-items: center;
-    margin-right: 20px
+    margin-right: 20px;
+}
+
+.file-info-uploaded-by {
+	display: flex;
+	flex-direction: row;
+
+	height: 100%;
+	padding: 0;
+}
+
+.file-info-uploaded-by img {
+	max-height: 35px;
+}
+
+.file-info-uploaded-by p {
+	padding: 5px;
 }
 
 input {
