@@ -4,7 +4,6 @@ export const ENDPOINT = import.meta.env.VITE_ENDPOINT;
 export const ACCESS_LEVEL_ANY = -1;
 export const ACCESS_LEVEL_USER = 0;
 export const ACCESS_LEVEL_MODERATOR = 1;
-
 export const ACCESS_LEVEL_ADMIN = 2;
 
 export const VIEW_LIST = 0;

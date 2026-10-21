@@ -160,7 +160,6 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    
     overflow: hidden;
 }
 
@@ -182,6 +181,8 @@
     height: 40px;
     width: 100%;
     background-color: var(--bg4);
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 .controls {
