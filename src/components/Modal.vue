@@ -1,10 +1,10 @@
 <template>
     <transition name="modal-fade">
-        <div class="modal" v-if="show" @click="close">
+        <div class="modal" v-if="show" @click="onOutsideClick">
             <div class="modal-content" @click.stop>
                 <div class="modal-top">
                     <button class="close-button" @click="close" v-if="closebtn">
-                        <i style="vertical-align: top;" class="fa fa-remove"></i>
+                        <i style="vertical-align: top" class="fa fa-remove"></i>
                     </button>
                 </div>
 
@@ -13,7 +13,7 @@
                         <slot></slot>
                     </div>
 
-                    <div v-else style="display: flex; min-width: 15vw;">
+                    <div v-else style="display: flex; min-width: 15vw">
                         <div style="margin-right: 20px">
                             <i class="fa fa-4x" :class="icon"></i>
                         </div>
@@ -22,10 +22,7 @@
                     </div>
                 </div>
 
-                <div
-                    v-if="buttons.length > 0"
-                    class="modal-bottom"
-                >
+                <div v-if="buttons.length > 0" class="modal-bottom">
                     <button
                         v-for="(button, index) in buttons"
                         :title="showTitle(index)"
@@ -50,7 +47,7 @@ export default {
         };
     },
     mounted() {
-        window.addEventListener("keydown", event => {
+        window.addEventListener("keydown", (event) => {
             if (this.closebtn && event.key == "Escape") {
                 this.close();
             }
@@ -64,21 +61,21 @@ export default {
     props: {
         buttons: {
             type: Array,
-            default: ["Ok"]
+            default: ["Ok"],
         },
         closebtn: {
             type: Boolean,
-            default: true
-        }
+            default: true,
+        },
     },
     emits: ["response", "close", "open"],
     methods: {
         showTitle(index) {
             switch (index) {
                 case 0:
-                    return "Hotkey: [Enter]"
+                    return "Hotkey: [Enter]";
                 case 1:
-                    return "Hotkey: [Escape]"
+                    return "Hotkey: [Escape]";
             }
         },
         open(text = "", icon = "fa-exclamation-triangle") {
@@ -86,6 +83,21 @@ export default {
             this.icon = icon;
             this.show = true;
             this.$emit("open");
+        },
+
+        onOutsideClick() {
+            const activeElement = document.activeElement;
+
+            const isInputFocused =
+                activeElement &&
+                (activeElement.matches("input, textarea, select") ||
+                    activeElement.isContentEditable);
+
+            if (isInputFocused) {
+                return;
+            }
+
+            this.close();
         },
 
         openAsync(text = "", icon = "fa-exclamation-triangle") {
@@ -108,13 +120,12 @@ export default {
             if (this.resolvePromise) {
                 this.resolvePromise(index);
             }
-        }
+        },
     },
 };
 </script>
 
 <style scoped>
-
 .modal {
     position: fixed;
     top: 0;
@@ -183,12 +194,12 @@ export default {
 .modal-fade-enter-active,
 .modal-fade-leave-active {
     transition: all 0.2s ease;
-    transform: scale(1.0, 1.0);
+    transform: scale(1, 1);
 }
 
 .modal-fade-enter-from,
 .modal-fade-leave-to {
     opacity: 0;
-    transform: scale(1.0, 0.97);
+    transform: scale(1, 0.97);
 }
 </style>
