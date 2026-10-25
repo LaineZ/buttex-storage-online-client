@@ -117,6 +117,13 @@ export default {
         contextMenuBackgroundItems() {
             const menu = [];
 
+            if (this.havePermission) {
+                menu.push({
+                    name: 'Upload files',
+                    icon: 'fa-upload'
+                });
+            }
+
             if (this.havePermissionCreateDirectory) {
                 menu.push({
                     name: 'Create directory',
@@ -184,6 +191,10 @@ export default {
             }
 
             return menu;
+        },
+
+        ENDPOINT() {
+            return ENDPOINT;
         }
     },
     async mounted() {
@@ -324,10 +335,14 @@ export default {
         async handleBackgroundContextMenuItemClick(item) {
             switch (item) {
                 case 0:
-                    await this.createDirectory();
+                    await this.uploadFiles();
                     break;
 
                 case 1:
+                    await this.createDirectory();
+                    break;
+
+                case 2:
                     await this.getFiles();
                     break;
             }
@@ -475,13 +490,19 @@ export default {
         },
 
         fileDrop(formData) {
-            console.log(formData);
             this.$refs.uploadBin.pushFiles(formData, true);
         },
 
-        fileDropButton(event) {
-            const files = event.target.files;
-            this.$refs.uploadBin.pushFiles(files);
+        uploadFiles() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+
+            input.onchange = async (event) => {
+                this.$refs.uploadBin.pushFiles(event.target.files);
+            };
+
+            input.click();
         },
 
         switchView() {

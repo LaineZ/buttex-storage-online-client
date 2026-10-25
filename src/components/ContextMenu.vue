@@ -47,12 +47,9 @@ export default {
             window.addEventListener('scroll', this.hideContextMenu);
 
             this.$nextTick(() => {
-                console.log(this.$refs.ctxMenu.clientHeight);
-
                 if (event.clientY + this.$refs.ctxMenu.clientHeight > window.innerHeight) {
                     this.position.y -= this.$refs.ctxMenu.clientHeight;
                 }
-
 
                 if (event.clientX + this.$refs.ctxMenu.clientWidth > window.innerWidth) {
                     this.position.x -= this.$refs.ctxMenu.clientWidth;

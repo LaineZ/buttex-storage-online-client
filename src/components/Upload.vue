@@ -45,11 +45,11 @@ export default {
         },
 
         formattedSPEEEEEEEEEEEEEEEEEEEEEEEEEEEED() {
-          return formatBytes(this.file.speed);
+			return formatBytes(this.file.speed);
         },
 
         fileName() {
-          return this.file.formData.get('file').name;
+			return this.file.file.name;
         },
     }
 

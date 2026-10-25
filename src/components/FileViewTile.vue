@@ -27,7 +27,7 @@ export default {
 
 <template>
     <div class="tile" :class="entry.hidden ? 'hidden' : ''" v-if="isDirectory" v-bind="$attrs">
-        <i class="fa fa-folder-o fa-3x table-icon-directory" aria-hidden="true"></i> {{ entry.name }}
+        <i class="fa fa-folder-o fa-3x table-preview-icon-directory" aria-hidden="true"></i> {{ entry.name }}
     </div>
     
     <div class="tile" v-else v-bind="$attrs">
@@ -40,7 +40,7 @@ export default {
             }"
         />
        
-        <i v-else class="fa fa-3x table-icon-file" :class="mapIcon(entry.type)" aria-hidden="true"></i>
+        <i v-else class="fa fa-3x table-preview-icon-file" :class="mapIcon(entry.type)" aria-hidden="true"></i>
        
         <div class="tile-summary">
             <p>{{ entry.name }}</p>
@@ -112,11 +112,11 @@ export default {
     transform: scale(0.985);
 }
 
-.table-icon-file {
+.table-preview-icon-file {
     color: var(--file);
 }
 
-.table-icon-directory {
+.table-preview-icon-directory {
     color: var(--directory);
 }
 
