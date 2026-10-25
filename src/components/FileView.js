@@ -191,6 +191,10 @@ export default {
             }
 
             return menu;
+        },
+
+        ENDPOINT() {
+            return ENDPOINT;
         }
     },
     async mounted() {

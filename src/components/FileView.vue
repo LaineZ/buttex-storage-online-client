@@ -60,7 +60,13 @@
                     <tr v-for="folder in files.data.directories"
                         @contextmenu.prevent="openDirectoryContextMenu($event, folder.id)" @click="openFolder(folder.id)">
                         <td :class="folder.hidden ? 'hidden' : ''">
-                            <i class="fa fa-folder-o table-icon-directory" aria-hidden="true"></i> {{ folder.name }}
+                            <div class="table-preview-and-name">
+                                <div class="table-preview">
+                                    <i class="fa fa-folder-o table-preview-icon-directory" aria-hidden="true"/>
+                                </div>
+
+                                {{ folder.name }}
+                            </div>
                         </td>
                         
                         <td class="not-show-on-phone">
@@ -80,10 +86,32 @@
                         </td>
                     </tr>
                     
-                    <tr v-for="file in files.data.files" @contextmenu.prevent="openFileContextMenu($event, file.id)"
-                        @click="openFilePreview(file.id)">
+                    <tr
+                        v-for="file in files.data.files"
+                        @contextmenu.prevent="openFileContextMenu($event, file.id)"
+                        @click="openFilePreview(file.id)"
+                    >
                         <td :class="file.hidden ? 'hidden' : ''">
-                            <i class="fa table-icon-file" :class="mapIcon(file.type)" aria-hidden="true"></i> {{ file.name }}
+                            <div class="table-preview-and-name">
+                                <div class="table-preview">
+                                    <div
+                                        v-if="file.has_preview"
+                                        class="table-preview-image"
+                                        :style="{
+                                            'background-image': `url('${ENDPOINT}/api/storage/get_file_preview?file_id=${file.id}')`
+                                        }"
+                                    />
+
+                                    <i
+                                        v-if="!file.has_preview"
+                                        class="fa table-preview-icon-file"
+                                        :class="mapIcon(file.type)"
+                                        aria-hidden="true"
+                                    />
+                                </div>
+
+                                {{ file.name }}
+                            </div>
                         </td>
                         <td class="not-show-on-phone">
                             {{ file.user_nickname }}
@@ -253,7 +281,7 @@
 
 .directory-traversal i {
     color: var(--fg6);
-    
+
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -303,11 +331,49 @@ table tr:hover {
     pointer-events: none;
 }
 
-.table-icon-file {
+.table-preview-and-name {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.table-preview {
+    max-width: 25px;
+    max-height: 25px;
+
+    min-width: 25px;
+    min-height: 25px;
+
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+}
+
+.table-preview-image {
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    background-size: cover;
+}
+
+.table-preview-icon-file,
+.table-preview-icon-directory {
+    width: 100%;
+    height: 100%;
+
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.table-preview-icon-file {
     color: var(--file);
 }
 
-.table-icon-directory {
+.table-preview-icon-directory {
     color: var(--directory);
 }
 

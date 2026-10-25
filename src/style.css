@@ -71,7 +71,7 @@ table th {
 }
 
 table td, table th {
-    padding: 5px;
+    padding: 8px;
     word-break: break-all;
 }
 
@@ -88,7 +88,7 @@ pre {
 
 table tr i {
     color: var(--fg2);
-    margin-right: 5px;
+    margin-top: 4px;
 }
 
 table tr:nth-child(odd) {
