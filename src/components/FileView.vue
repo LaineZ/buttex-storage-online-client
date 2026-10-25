@@ -10,9 +10,8 @@
                     <i class="fa" :class="view == 0 ? 'fa-list' : 'fa-th-large'"></i>
                 </button>
 
-                <button v-if="havePermission" title="Upload" class="upload-button">
+                <button v-if="havePermission" title="Upload files" class="upload-button" @click="uploadFiles">
                     <i class="fa fa-upload"></i>
-                    <input type="file" name="file" @change="fileDropButton" multiple>
                 </button>
 
                 <button v-if="havePermissionCreateDirectory" @click="createDirectory"

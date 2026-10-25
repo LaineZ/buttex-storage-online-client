@@ -6,5 +6,8 @@ export default defineConfig({
   plugins: [vue()],
   build: {
       sourcemap: true,
+  },
+  server: {
+      host: '127.0.0.1'
   }
 })
