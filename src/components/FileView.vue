@@ -354,9 +354,6 @@ table tr:hover {
 .table-preview-image {
     width: 100%;
     height: 100%;
-
-    border-radius: 50%;
-
     background-size: cover;
 }
 
