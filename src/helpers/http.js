@@ -48,27 +48,32 @@ export async function RequestGET(path, getOptions = null) {
     }
 }
 
+export function clearLocalStorageAuthorizationData() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
+}
+
 export async function getUserInfo() {
     const authStore = useAuthStore();
 
     if (localStorage.getItem("token")) {
         try {
             await RequestGET("/api/users/validate_token");
-        } catch (e) {
+        }catch (e) {
             console.log(e);
-            localStorage.setItem("token", "");
-            localStorage.setItem("user_id", "");
+
+            clearLocalStorageAuthorizationData();
             window.location.reload();
         }
+
+        try {
+            let response = await RequestGET("/api/users/get_profile_info", {
+                user_id: localStorage.getItem("user_id")
+            });
+
+            authStore.setInfo(response.data);
+        } catch (e) {}
     }
-
-    try {
-        let response = await RequestGET("/api/users/get_profile_info", {
-            user_id: localStorage.getItem("user_id")
-        });
-
-        authStore.setInfo(response.data);
-    } catch (e) {}
 }
 
 export function canEdit(ownerId) {

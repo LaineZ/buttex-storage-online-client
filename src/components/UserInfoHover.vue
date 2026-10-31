@@ -35,7 +35,7 @@
 import {useAuthStore} from "../store/auth.js";
 import {ref, watchEffect} from "vue";
 import {ACCESS_LEVEL_ADMIN, ACCESS_LEVEL_MODERATOR, ACCESS_LEVEL_USER, ENDPOINT} from "../helpers/consts.js";
-import {RequestGET} from "../helpers/http.js";
+import {clearLocalStorageAuthorizationData, RequestGET} from "../helpers/http.js";
 import Modal from "./Modal.vue";
 import ChangeAvatarModal from "./ChangeAvatarModal.vue";
 import LoadingOverlay from "./LoadingOverlay.vue";
@@ -132,8 +132,8 @@ export default {
         },
 
         async logout() {
-            localStorage.setItem("token", "");
-            localStorage.setItem("user_id", "");
+            clearLocalStorageAuthorizationData();
+
             window.location.reload();
         },
 
